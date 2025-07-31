@@ -1,0 +1,44 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif">
+  <!--
+    Logo for VoteChain - Online Voting System
+    Combines a ballot box, a checkmark, and a chain link to represent secure voting.
+    Primary color is indigo to match the website's theme.
+  -->
+  <defs>
+    <linearGradient id="indigoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4F46E5; stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#818CF8; stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background Circle -->
+  <circle cx="100" cy="100" r="95" fill="#F3F4F6"/>
+
+  <!-- Ballot Box Shape -->
+  <path d="M 50 75 H 150 V 135 H 50 Z" fill="url(#indigoGradient)" stroke="#3730A3" stroke-width="4" rx="8"/>
+  <rect x="70" y="55" width="60" height="20" fill="url(#indigoGradient)" stroke="#3730A3" stroke-width="4" rx="5"/>
+  <rect x="85" y="75" width="30" height="10" fill="#F3F4F6" rx="3"/>
+
+  <!-- Checkmark / Chain Link -->
+  <g transform="translate(0, -10)">
+    <path 
+      d="M 80 105 L 95 120 L 130 85" 
+      stroke="#10B981" 
+      stroke-width="15" 
+      fill="none" 
+      stroke-linecap="round" 
+      stroke-linejoin="round"
+    />
+    <path 
+      d="M 80 105 L 95 120 L 130 85" 
+      stroke="white" 
+      stroke-width="7" 
+      fill="none" 
+      stroke-linecap="round" 
+      stroke-linejoin="round"
+    />
+  </g>
+  
+  <!-- Text "VoteChain" -->
+  <text x="100" y="175" font-size="28" font-weight="bold" fill="#3730A3" text-anchor="middle">VoteChain</text>
+</svg>
