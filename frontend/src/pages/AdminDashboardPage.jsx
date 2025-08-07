@@ -5,6 +5,8 @@ import Alert from '../components/common/Alert';
 import Button from '../components/common/Button';
 import AdminPanel from '../components/AdminPanel';
 import VoteModal from '../components/VoteModal'; // Re-using for elections
+import PartyModal from '../components/ManagePartiesModal';
+import ManagePartiesModal from '../components/ManagePartiesModal';
 
 export default function AdminDashboardPage() {
   const [elections, setElections] = useState([]);
@@ -12,6 +14,7 @@ export default function AdminDashboardPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [showElectionModal, setShowElectionModal] = useState(false);
+  const [showPartyModal, setShowPartyModal] = useState(false);
 
   const fetchDashboardData = async () => {
     setLoading(true);
@@ -42,6 +45,15 @@ export default function AdminDashboardPage() {
   return (
     <div className="max-w-7xl mx-auto">
       {/* Header Section */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+        {/* ... Stats ... */}
+        <Button 
+          onClick={() => setShowPartyModal(true)}
+          className="w-full sm:w-auto bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold py-3 px-6 rounded-xl"
+        >
+          Manage Parties
+        </Button>
+      </div>
       <div className="mb-8">
         <div className="glass-effect rounded-2xl p-8 shadow-medium">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
@@ -142,6 +154,13 @@ export default function AdminDashboardPage() {
         )
       )}
       
+      {/* Party Modal */}
+      {showPartyModal && (
+          <ManagePartiesModal
+              onClose={() => setShowPartyModal(false)}
+          />
+      )}
+
       {/* Election Modal */}
       {showElectionModal && (
         <VoteModal

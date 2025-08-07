@@ -36,3 +36,9 @@ export const addElection = (electionData) => api.post('/admin/elections', electi
 export const deleteElection = (electionId) => api.delete(`/admin/elections/${electionId}`);
 export const addCandidate = (candidateData) => api.post('/admin/candidates', candidateData);
 export const deleteCandidate = (candidateId) => api.delete(`/admin/candidates/${candidateId}`);
+
+export const addParty = (formData) => api.post('/admin/parties', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+export const getParties = () => api.get('/admin/parties');
+
+export const updateParty = (id, formData) => api.put(`/admin/parties/${id}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+export const deleteParty = (id) => api.delete(`/admin/parties/${id}`);

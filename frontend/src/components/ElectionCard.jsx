@@ -8,6 +8,8 @@ export default function ElectionCard({ election, hasVoted, onVoteSuccess }) {
   const [selectedCandidate, setSelectedCandidate] = useState('');
   const [error, setError] = useState('');
   const [voteDetails, setVoteDetails] = useState(null);
+  const API_BASE_URL = import.meta.env.VITE_API_URL.replace('/api', ''); // Get base URL like http://localhost:5000
+
 
   const isElectionActive = () => {
     const now = new Date();
@@ -142,10 +144,26 @@ export default function ElectionCard({ election, hasVoted, onVoteSuccess }) {
                     onChange={() => setSelectedCandidate(candidate._id)} 
                     className="w-5 h-5 text-indigo-600 border-gray-300 focus:ring-indigo-500 focus:ring-2"
                   />
+
+                  {/* Logo and Candidate Info */}
+                  <div className="ml-4 flex-grow flex items-center gap-4">
+                    {candidate.party.logoUrl && (
+                      <img 
+                        src={`${API_BASE_URL}${candidate.party.logoUrl}`} 
+                        alt={`${candidate.party.name} logo`}
+                        className="w-10 h-10 object-contain rounded-md"
+                      />
+                    )}
+                    <div>
+                      <div className="font-semibold text-gray-900">{candidate.name}</div>
+                      <div className="text-sm text-gray-600">({candidate.party.name})</div>
+                    </div>
+                  </div>
                   <div className="ml-4 flex-grow">
                     <div className="font-semibold text-gray-900">{candidate.name}</div>
                     <div className="text-sm text-gray-600">({candidate.party})</div>
                   </div>
+                  
                   {selectedCandidate === candidate._id && (
                     <svg className="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />

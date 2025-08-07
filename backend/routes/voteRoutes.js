@@ -11,10 +11,19 @@ const { authMiddleware } = require('../middleware/authMiddleware');
 
 const voteRouter = express.Router();
 
-// GET /api/elections (Get all elections) - No changes
+// GET /api/elections (Get all elections)
 voteRouter.get('/elections', async (req, res) => {
     try {
-        const elections = await Election.find().populate('candidates').sort({ startDate: -1 });
+        const elections = await Election.find()
+            // Deeply populate the party details for each candidate
+            .populate({
+                path: 'candidates',
+                populate: {
+                    path: 'party',
+                    model: 'Party'
+                }
+            })
+            .sort({ startDate: -1 });
         res.json(elections);
     } catch (err) {
         console.error(err.message);
