@@ -115,4 +115,57 @@ adminRouter.delete('/candidates/:id', [authMiddleware, adminMiddleware], async (
     }
 });
 
+// GET /api/admin/election-results/:electionId (Get detailed election results with voter info)
+adminRouter.get('/election-results/:electionId', [authMiddleware, adminMiddleware], async (req, res) => {
+    try {
+        const mongoose = require('mongoose');
+        const { User } = require('../models/User');
+        const electionId = req.params.electionId;
+        
+        // Get election details
+        const election = await Election.findById(electionId).populate('candidates');
+        if (!election) {
+            return res.status(404).json({ msg: 'Election not found' });
+        }
+        
+        // Get vote results with candidate details
+        const results = await Vote.aggregate([
+            { $match: { election: new mongoose.Types.ObjectId(electionId) } },
+            { $group: { _id: '$candidate', count: { $sum: 1 } } },
+            { $lookup: { from: 'candidates', localField: '_id', foreignField: '_id', as: 'candidateDetails' } },
+            { $unwind: '$candidateDetails' },
+            { $project: { _id: 0, candidateId: '$_id', name: '$candidateDetails.name', party: '$candidateDetails.party', votes: '$count' } }
+        ]);
+        
+        // Get voter details
+        const voterDetails = await Vote.find({ election: electionId })
+            .populate('voter', 'name email')
+            .populate('candidate', 'name party')
+            .sort({ createdAt: -1 });
+        
+        const voters = voterDetails.map(vote => ({
+            voterName: vote.voter.name,
+            voterEmail: vote.voter.email,
+            candidateName: vote.candidate.name,
+            candidateParty: vote.candidate.party,
+            votedAt: vote.createdAt || new Date()
+        }));
+        
+        res.json({
+            election: {
+                title: election.title,
+                description: election.description,
+                startDate: election.startDate,
+                endDate: election.endDate
+            },
+            results,
+            voters,
+            totalVotes: voters.length
+        });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+});
+
 module.exports = adminRouter;

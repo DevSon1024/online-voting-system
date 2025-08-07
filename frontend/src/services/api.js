@@ -27,6 +27,9 @@ export const getElectionResults = (electionId) => api.get(`/results/${electionId
 export const castVote = (electionId, candidateId) => api.post(`/vote/${electionId}`, { candidateId });
 // **NEW FUNCTION**
 export const getUserVotedElections = () => api.get('/user/voted-elections');
+export const getUserProfile = () => api.get('/user/profile');
+export const getUserVoteDetails = (electionId) => api.get(`/user/vote-details/${electionId}`);
+export const getAdminElectionResults = (electionId) => api.get(`/admin/election-results/${electionId}`);
 
 // --- Admin Service ---
 export const addElection = (electionData) => api.post('/admin/elections', electionData);

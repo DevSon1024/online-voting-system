@@ -75,5 +75,45 @@ voteRouter.get('/user/voted-elections', authMiddleware, async (req, res) => {
     }
 });
 
+// GET /api/user/profile (Get current user's profile)
+voteRouter.get('/user/profile', authMiddleware, async (req, res) => {
+    try {
+        const { User } = require('../models/User');
+        const user = await User.findById(req.user.id).select('-password');
+        if (!user) {
+            return res.status(404).json({ msg: 'User not found' });
+        }
+        res.json(user);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+});
+
+// GET /api/user/vote-details/:electionId (Get user's vote details for specific election)
+voteRouter.get('/user/vote-details/:electionId', authMiddleware, async (req, res) => {
+    try {
+        const { Candidate } = require('../models/Candidate');
+        const electionId = req.params.electionId;
+        const vote = await Vote.findOne({ 
+            voter: req.user.id, 
+            election: electionId 
+        }).populate('candidate');
+        
+        if (!vote) {
+            return res.status(404).json({ msg: 'Vote not found' });
+        }
+        
+        res.json({
+            candidateId: vote.candidate._id,
+            candidateName: vote.candidate.name,
+            candidateParty: vote.candidate.party,
+            votedAt: vote.createdAt || new Date()
+        });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+});
 
 module.exports = voteRouter;

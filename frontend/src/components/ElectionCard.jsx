@@ -1,12 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { castVote } from '../services/api';
+import { castVote, getUserVoteDetails } from '../services/api';
 import Alert from './common/Alert';
 import Button from './common/Button';
 
 export default function ElectionCard({ election, hasVoted, onVoteSuccess }) {
   const [selectedCandidate, setSelectedCandidate] = useState('');
   const [error, setError] = useState('');
+  const [voteDetails, setVoteDetails] = useState(null);
 
   const isElectionActive = () => {
     const now = new Date();
@@ -14,6 +15,21 @@ export default function ElectionCard({ election, hasVoted, onVoteSuccess }) {
   };
   
   const isVotingEnded = () => new Date() > new Date(election.endDate);
+
+  // Fetch vote details if user has voted
+  useEffect(() => {
+    const fetchVoteDetails = async () => {
+      if (hasVoted) {
+        try {
+          const response = await getUserVoteDetails(election._id);
+          setVoteDetails(response.data);
+        } catch (err) {
+          console.error('Error fetching vote details:', err);
+        }
+      }
+    };
+    fetchVoteDetails();
+  }, [hasVoted, election._id]);
 
   const handleSubmitVote = async (e) => {
     e.preventDefault();
@@ -33,47 +49,150 @@ export default function ElectionCard({ election, hasVoted, onVoteSuccess }) {
   // If the user has already voted in this election
   if (hasVoted) {
     return (
-      <div className="bg-white p-6 rounded-lg shadow-md flex flex-col h-full">
-        <h3 className="text-xl font-bold">{election.title}</h3>
-        <div className="flex-grow flex flex-col items-center justify-center my-4">
-            <div className="bg-green-100 text-green-800 p-4 rounded-full mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-            </div>
-            <p className="font-semibold text-green-800">Your vote has been recorded.</p>
+      <div className="glass-effect rounded-2xl p-6 shadow-medium hover:shadow-large transition-all duration-300 flex flex-col h-full border border-white/20">
+        <div className="flex items-start justify-between mb-4">
+          <h3 className="text-xl font-bold text-gray-900">{election.title}</h3>
+          <div className="flex items-center gap-2 bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-semibold">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+            Voted
+          </div>
         </div>
-        <Link to={`/results/${election._id}`} className="w-full text-center bg-gray-200 text-gray-800 font-medium py-2 px-4 rounded-md hover:bg-gray-300">View Results</Link>
+        
+        <div className="flex-grow flex flex-col items-center justify-center my-6">
+          <div className="gradient-success rounded-full p-6 mb-4 shadow-medium">
+            <svg className="h-12 w-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+          <p className="font-semibold text-gray-800 text-center mb-2">Your vote has been recorded</p>
+          <p className="text-sm text-gray-600 text-center mb-4">Thank you for participating in this election</p>
+          
+          {/* Show frozen vote details */}
+          {voteDetails && (
+            <div className="w-full bg-gray-50 border-2 border-gray-200 rounded-xl p-4 mb-4">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium text-gray-500">Your Vote (Frozen)</span>
+                <div className="flex items-center gap-1 text-green-600">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  </svg>
+                  <span className="text-xs font-semibold">LOCKED</span>
+                </div>
+              </div>
+              <div className="bg-white rounded-lg p-3 border border-gray-200">
+                <div className="font-semibold text-gray-900">{voteDetails.candidateName}</div>
+                <div className="text-sm text-gray-600">({voteDetails.candidateParty})</div>
+                <div className="text-xs text-gray-500 mt-1">
+                  Voted on {new Date(voteDetails.votedAt).toLocaleDateString()} at {new Date(voteDetails.votedAt).toLocaleTimeString()}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+        
+        <Link 
+          to={`/results/${election._id}`} 
+          className="w-full text-center bg-white/80 backdrop-blur-sm text-gray-700 font-semibold py-3 px-4 rounded-xl border-2 border-gray-200 hover:border-indigo-300 hover:shadow-medium hover:scale-105 transition-all duration-200"
+        >
+          View Results
+        </Link>
       </div>
     );
   }
 
   // If the user has NOT voted yet
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md flex flex-col h-full">
-      <h3 className="text-xl font-bold">{election.title}</h3>
-      <p className="text-gray-600 mb-4 flex-grow">{election.description}</p>
+    <div className="glass-effect rounded-2xl p-6 shadow-medium hover:shadow-large transition-all duration-300 flex flex-col h-full border border-white/20">
+      <div className="mb-4">
+        <div className="flex items-start justify-between mb-2">
+          <h3 className="text-xl font-bold text-gray-900">{election.title}</h3>
+          <div className="flex items-center gap-2 bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-semibold">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            {isElectionActive() ? 'Active' : isVotingEnded() ? 'Ended' : 'Upcoming'}
+          </div>
+        </div>
+        <p className="text-gray-600 text-sm leading-relaxed">{election.description}</p>
+      </div>
       
       {isElectionActive() ? (
-        <form onSubmit={handleSubmitVote}>
+        <form onSubmit={handleSubmitVote} className="flex-grow flex flex-col">
           <Alert message={error} type="error" />
-          <div className="space-y-2 mb-4">
-            {election.candidates.length > 0 ? election.candidates.map(candidate => (
-              <label key={candidate._id} className="flex items-center p-3 rounded-lg bg-gray-50 hover:bg-gray-100 cursor-pointer transition-colors">
-                <input type="radio" name={`election-${election._id}`} value={candidate._id} checked={selectedCandidate === candidate._id} onChange={() => setSelectedCandidate(candidate._id)} className="form-radio h-5 w-5 text-indigo-600"/>
-                <span className="ml-3 text-gray-700">{candidate.name} <span className="text-sm text-gray-500">({candidate.party})</span></span>
-              </label>
-            )) : <p className="text-sm text-gray-500">No candidates have been added to this election yet.</p>}
+          
+          <div className="flex-grow">
+            <h4 className="text-sm font-semibold text-gray-700 mb-3">Select your candidate:</h4>
+            <div className="space-y-3 mb-6">
+              {election.candidates.length > 0 ? election.candidates.map(candidate => (
+                <label 
+                  key={candidate._id} 
+                  className={`flex items-center p-4 rounded-xl cursor-pointer transition-all duration-200 border-2 ${
+                    selectedCandidate === candidate._id 
+                      ? 'bg-indigo-50 border-indigo-300 shadow-soft' 
+                      : 'bg-white/60 border-gray-200 hover:border-gray-300 hover:bg-white/80'
+                  }`}
+                >
+                  <input 
+                    type="radio" 
+                    name={`election-${election._id}`} 
+                    value={candidate._id} 
+                    checked={selectedCandidate === candidate._id} 
+                    onChange={() => setSelectedCandidate(candidate._id)} 
+                    className="w-5 h-5 text-indigo-600 border-gray-300 focus:ring-indigo-500 focus:ring-2"
+                  />
+                  <div className="ml-4 flex-grow">
+                    <div className="font-semibold text-gray-900">{candidate.name}</div>
+                    <div className="text-sm text-gray-600">({candidate.party})</div>
+                  </div>
+                  {selectedCandidate === candidate._id && (
+                    <svg className="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                  )}
+                </label>
+              )) : (
+                <div className="text-center py-8">
+                  <svg className="w-12 h-12 text-gray-400 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                  </svg>
+                  <p className="text-sm text-gray-500">No candidates have been added yet</p>
+                </div>
+              )}
+            </div>
           </div>
-          <Button type="submit">Cast Your Vote</Button>
+          
+          <Button type="submit" variant="primary">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Cast Your Vote
+          </Button>
         </form>
       ) : (
-        <div className="text-center p-4 bg-gray-100 rounded-md mt-auto">
-          <p className="font-semibold text-gray-700">
-            {isVotingEnded() ? 'Voting has ended.' : `Voting starts on ${new Date(election.startDate).toLocaleDateString()}`}
+        <div className="flex-grow flex flex-col items-center justify-center text-center p-6 bg-white/40 backdrop-blur-sm rounded-xl border border-gray-200">
+          <div className="inline-flex items-center justify-center w-16 h-16 gradient-secondary rounded-full mb-4 shadow-soft">
+            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <p className="font-semibold text-gray-800 mb-2">
+            {isVotingEnded() ? 'Voting has ended' : `Voting starts on ${new Date(election.startDate).toLocaleDateString()}`}
+          </p>
+          <p className="text-sm text-gray-600 mb-4">
+            {isVotingEnded() ? 'Check out the final results below' : 'Come back when voting begins'}
           </p>
           {isVotingEnded() && (
-            <Link to={`/results/${election._id}`} className="mt-2 inline-block text-indigo-600 hover:underline">View Final Results</Link>
+            <Link 
+              to={`/results/${election._id}`} 
+              className="inline-flex items-center gap-2 text-indigo-600 hover:text-indigo-500 font-semibold transition-colors duration-200"
+            >
+              View Final Results
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </Link>
           )}
         </div>
       )}

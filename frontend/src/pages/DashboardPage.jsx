@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getElections, getUserVotedElections } from '../services/api';
+import { getElections, getUserVotedElections, getUserProfile } from '../services/api';
 import Spinner from '../components/common/Spinner';
 import Alert from '../components/common/Alert';
 import ElectionCard from '../components/ElectionCard';
@@ -7,19 +7,22 @@ import ElectionCard from '../components/ElectionCard';
 export default function DashboardPage() {
   const [elections, setElections] = useState([]);
   const [votedElectionIds, setVotedElectionIds] = useState(new Set());
+  const [userProfile, setUserProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   const fetchDashboardData = async () => {
     try {
-      // Use Promise.all to fetch elections and user's vote history concurrently
-      const [electionsRes, votedRes] = await Promise.all([
+      // Use Promise.all to fetch elections, user's vote history, and profile concurrently
+      const [electionsRes, votedRes, profileRes] = await Promise.all([
         getElections(),
-        getUserVotedElections()
+        getUserVotedElections(),
+        getUserProfile()
       ]);
       
       setElections(electionsRes.data);
       setVotedElectionIds(new Set(votedRes.data.map(String))); // Store IDs as strings for easy comparison
+      setUserProfile(profileRes.data);
       
     } catch (err) {
       setError('Could not connect to the server. Please check your connection and try again.');
@@ -41,22 +44,101 @@ export default function DashboardPage() {
   if (loading) return <Spinner />;
 
   return (
-    <div>
-      <h1 className="text-3xl font-bold mb-6 text-gray-800">Elections Dashboard</h1>
+    <div className="max-w-7xl mx-auto">
+      {/* Header Section */}
+      <div className="mb-8">
+        <div className="glass-effect rounded-2xl p-8 shadow-medium">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-4">
+              <div className="gradient-primary rounded-2xl p-3 shadow-soft">
+                <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+              </div>
+              <div>
+                <h1 className="text-4xl font-bold text-gray-900 mb-2">Elections Dashboard</h1>
+                <p className="text-gray-600">Participate in active elections and view your voting history</p>
+                {userProfile && (
+                  <div className="mt-3 flex items-center gap-4 text-sm">
+                    <div className="flex items-center gap-2 bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      </svg>
+                      <span className="font-semibold">{userProfile.name}</span>
+                    </div>
+                    <div className="flex items-center gap-2 bg-gray-50 text-gray-700 px-3 py-1 rounded-full">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
+                      </svg>
+                      <span>{userProfile.email}</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+            
+            {/* Stats */}
+            <div className="hidden md:flex items-center gap-6">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-indigo-600">{elections.length}</div>
+                <div className="text-sm text-gray-500">Total Elections</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-green-600">{votedElectionIds.size}</div>
+                <div className="text-sm text-gray-500">Votes Cast</div>
+              </div>
+            </div>
+          </div>
+          
+          {/* Mobile Stats */}
+          <div className="md:hidden flex justify-center gap-8 mt-6 pt-6 border-t border-gray-200">
+            <div className="text-center">
+              <div className="text-xl font-bold text-indigo-600">{elections.length}</div>
+              <div className="text-sm text-gray-500">Total Elections</div>
+            </div>
+            <div className="text-center">
+              <div className="text-xl font-bold text-green-600">{votedElectionIds.size}</div>
+              <div className="text-sm text-gray-500">Votes Cast</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      {/* Alert */}
       <Alert message={error} type="error" />
+      
+      {/* Elections Grid */}
       {!error && elections.length > 0 ? (
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {elections.map(election => (
-            <ElectionCard 
-              key={election._id} 
-              election={election} 
-              hasVoted={votedElectionIds.has(election._id)} 
-              onVoteSuccess={handleVoteSuccess} 
-            />
-          ))}
+        <div>
+          <div className="mb-6">
+            <h2 className="text-xl font-semibold text-gray-800 mb-2">Available Elections</h2>
+            <p className="text-gray-600">Click on any election card to participate or view results</p>
+          </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {elections.map(election => (
+              <ElectionCard 
+                key={election._id} 
+                election={election} 
+                hasVoted={votedElectionIds.has(election._id)} 
+                onVoteSuccess={handleVoteSuccess} 
+              />
+            ))}
+          </div>
         </div>
       ) : (
-        !loading && !error && <p className="text-center text-gray-500 mt-8">No elections are available at the moment.</p>
+        !loading && !error && (
+          <div className="text-center py-16">
+            <div className="glass-effect rounded-2xl p-12 shadow-medium">
+              <div className="inline-flex items-center justify-center w-20 h-20 gradient-secondary rounded-full mb-6 shadow-soft">
+                <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                </svg>
+              </div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-3">No Elections Available</h3>
+              <p className="text-gray-600 max-w-md mx-auto">There are no elections available at the moment. Check back later for new voting opportunities.</p>
+            </div>
+          </div>
+        )
       )}
     </div>
   );
