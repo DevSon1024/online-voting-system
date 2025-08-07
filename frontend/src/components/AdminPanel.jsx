@@ -139,7 +139,7 @@ export default function AdminPanel({ election, onDataChange }) {
                   </div>
                   <div>
                     <div className="font-semibold text-gray-900">{c.name}</div>
-                    <div className="text-sm text-gray-600">({c.party})</div>
+                    <div className="text-sm text-gray-600">({c.party.name})</div>
                   </div>
                 </div>
                 <button 

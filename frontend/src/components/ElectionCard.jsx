@@ -159,10 +159,6 @@ export default function ElectionCard({ election, hasVoted, onVoteSuccess }) {
                       <div className="text-sm text-gray-600">({candidate.party.name})</div>
                     </div>
                   </div>
-                  <div className="ml-4 flex-grow">
-                    <div className="font-semibold text-gray-900">{candidate.name}</div>
-                    <div className="text-sm text-gray-600">({candidate.party})</div>
-                  </div>
                   
                   {selectedCandidate === candidate._id && (
                     <svg className="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
