@@ -107,7 +107,13 @@ voteRouter.get('/user/vote-details/:electionId', authMiddleware, async (req, res
         const vote = await Vote.findOne({ 
             voter: req.user.id, 
             election: electionId 
-        }).populate('candidate');
+        }).populate({
+            path: 'candidate',
+            populate: {
+                path: 'party',
+                model: 'Party'
+            }
+        });
         
         if (!vote) {
             return res.status(404).json({ msg: 'Vote not found' });
@@ -116,7 +122,7 @@ voteRouter.get('/user/vote-details/:electionId', authMiddleware, async (req, res
         res.json({
             candidateId: vote.candidate._id,
             candidateName: vote.candidate.name,
-            candidateParty: vote.candidate.party,
+            candidateParty: vote.candidate.party.name,
             votedAt: vote.createdAt || new Date()
         });
     } catch (err) {

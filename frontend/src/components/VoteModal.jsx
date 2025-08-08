@@ -15,7 +15,7 @@ const electionTypesByLevel = {
 export default function VoteModal({ title, onClose, onSave, electionId = null, isCandidateModal = false }) {
   const [formData, setFormData] = useState(
     isCandidateModal
-      ? { name: '', party: '', electionId }
+      ? { name: '', partyId: '', electionId }
       : { title: '', description: '', electionLevel: '', electionType: '', state: '', city: '', startDate: '', endDate: '' }
   );
   const [error, setError] = useState('');
@@ -75,10 +75,10 @@ export default function VoteModal({ title, onClose, onSave, electionId = null, i
             <>
               <Input name="name" placeholder="Candidate Name" value={formData.name} onChange={handleChange} required />
               {/* Party Dropdown */}
-              <select name="party" value={formData.party} onChange={handleChange} required className="w-full px-4 py-3 bg-white/80 backdrop-blur-sm border-2 border-gray-200 rounded-xl">
+              <select name="partyId" value={formData.partyId} onChange={handleChange} required className="w-full px-4 py-3 bg-white/80 backdrop-blur-sm border-2 border-gray-200 rounded-xl">
                 <option value="" disabled>Select a Party</option>
                 {parties.map(party => (
-                  <option key={party._id} value={party.name}>{party.name} ({party.level})</option>
+                  <option key={party._id} value={party._id}>{party.name} ({party.level})</option>
                 ))}
               </select>
             </>

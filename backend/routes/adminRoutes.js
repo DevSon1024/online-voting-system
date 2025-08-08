@@ -157,7 +157,16 @@ adminRouter.get('/election-results/:electionId', [authMiddleware, adminMiddlewar
             { $group: { _id: '$candidate', count: { $sum: 1 } } },
             { $lookup: { from: 'candidates', localField: '_id', foreignField: '_id', as: 'candidateDetails' } },
             { $unwind: '$candidateDetails' },
-            { $project: { _id: 0, candidateId: '$_id', name: '$candidateDetails.name', party: '$candidateDetails.party', votes: '$count' } }
+
+            { $lookup: { from: 'parties', localField: 'candidateDetails.party', foreignField: '_id', as: 'partyDetails' } },
+            { $unwind: '$partyDetails' },
+
+            { $project: { 
+                _id: 0, 
+                candidateId: '$_id', 
+                name: '$candidateDetails.name', 
+                party: '$partyDetails.party', 
+                votes: '$count' } }
         ]);
         
         // Get voter details
