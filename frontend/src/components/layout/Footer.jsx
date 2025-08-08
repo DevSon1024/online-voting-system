@@ -40,7 +40,7 @@ export default function Footer() {
         </div>
         
         {/* Bottom Section */}
-        <div className="mt-8 pt-6 border-t border-gray-200 flex flex-col md:flex-row items-center justify-between text-sm text-gray-500">
+        {/* <div className="mt-8 pt-6 border-t border-gray-200 flex flex-col md:flex-row items-center justify-between text-sm text-gray-500">
           <div className="flex items-center gap-4 mb-2 md:mb-0">
             <p>&copy; {currentYear} VoteChain. All Rights Reserved.</p>
             <span className="hidden md:inline">•</span>
@@ -56,7 +56,7 @@ export default function Footer() {
               <span className="font-semibold text-indigo-600">React & Tailwind</span>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     </footer>
   );

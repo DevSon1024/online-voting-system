@@ -60,7 +60,19 @@ voteRouter.get('/results/:electionId', async (req, res) => {
             { $group: { _id: '$candidate', count: { $sum: 1 } } },
             { $lookup: { from: 'candidates', localField: '_id', foreignField: '_id', as: 'candidateDetails' } },
             { $unwind: '$candidateDetails' },
-            { $project: { _id: 0, candidateId: '$_id', name: '$candidateDetails.name', party: '$candidateDetails.party', votes: '$count' } }
+            // --- Add these two lines ---
+            { $lookup: { from: 'parties', localField: 'candidateDetails.party', foreignField: '_id', as: 'partyDetails' } },
+            { $unwind: '$partyDetails' },
+            // --- Update the project stage ---
+            { 
+                $project: { 
+                    _id: 0, 
+                    candidateId: '$_id', 
+                    name: '$candidateDetails.name', 
+                    party: '$partyDetails.name', // Use the looked-up party name
+                    votes: '$count' 
+                } 
+            }
         ]);
         res.json(results);
     } catch (err) {
@@ -122,6 +134,7 @@ voteRouter.get('/user/vote-details/:electionId', authMiddleware, async (req, res
         res.json({
             candidateId: vote.candidate._id,
             candidateName: vote.candidate.name,
+            // backend/routes/adminRoutes.js
             candidateParty: vote.candidate.party.name,
             votedAt: vote.createdAt || new Date()
         });

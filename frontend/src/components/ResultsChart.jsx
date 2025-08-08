@@ -11,7 +11,7 @@ export default function ResultsChart({ data }) {
 
   return (
     <div className="grid md:grid-cols-2 gap-8 items-center">
-      <div className="h-80">
+      <div className="h-96">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie data={data} dataKey="votes" nameKey="name" cx="50%" cy="50%" outerRadius={120} fill="#8884d8" label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}>

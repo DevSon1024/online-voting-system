@@ -73,3 +73,10 @@ it should be same as given above information if Election Level is 'National Leve
 -------------------------------------------------------------
 - add Election Location and like state and city for now should be stored in the database in the add new election with election name, description, level, type, Start Date, End Date there should be locations like State and City for every area voting system.
 - even if electio level is local.
+
+-----------------------------------
+
+- in Voter Information the 'Vote Time' is not showing properly means it should the time when the voter has given the vote at, but instead of that it is showing the time when we open the result section in admin page at perticular election block.
+- also in same Voter Information 'Voted For' section instead party name there is object id of the party
+
+- in voter side result section there also showing party object_id instead of party name. also adjust that chart propelry because when name of candidate come above the chart it cut in half (not show fully) 

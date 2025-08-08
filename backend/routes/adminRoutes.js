@@ -172,14 +172,21 @@ adminRouter.get('/election-results/:electionId', [authMiddleware, adminMiddlewar
         // Get voter details
         const voterDetails = await Vote.find({ election: electionId })
             .populate('voter', 'name email')
-            .populate('candidate', 'name party')
+            .populate({
+                path: 'candidate',
+                populate: {
+                    path: 'party',
+                    model: 'Party'
+                }
+            })
             .sort({ createdAt: -1 });
         
         const voters = voterDetails.map(vote => ({
             voterName: vote.voter.name,
             voterEmail: vote.voter.email,
             candidateName: vote.candidate.name,
-            candidateParty: vote.candidate.party,
+            // backend/routes/adminRoutes.js
+            candidateParty: vote.candidate.party.name,
             votedAt: vote.createdAt || new Date()
         }));
         
