@@ -3,6 +3,8 @@ import { addElection, addCandidate, getParties } from '../services/api'; // Impo
 import Alert from './common/Alert';
 import Input from './common/Input';
 import Button from './common/Button';
+import AutocompleteInput from './common/AutocompleteInput'; // Import the new component
+import statesData from '../data/indian-states-cities.json';
 
 // Election types based on level
 const electionTypesByLevel = {
@@ -20,6 +22,25 @@ export default function VoteModal({ title, onClose, onSave, electionId = null, i
   );
   const [error, setError] = useState('');
   const [parties, setParties] = useState([]); // State for parties
+
+  // New state for location data
+  const [states, setStates] = useState([]);
+  const [cities, setCities] = useState([]);
+
+  useEffect(() => {
+    // Load states for the dropdown
+    setStates(statesData.states.map(s => s.name));
+  }, []);
+
+  useEffect(() => {
+    // When the state in the form changes, update the city list
+    if (formData.state) {
+      const selectedState = statesData.states.find(s => s.name === formData.state);
+      setCities(selectedState ? selectedState.cities : []);
+    } else {
+      setCities([]);
+    }
+  }, [formData.state]);
 
   useEffect(() => {
     if (isCandidateModal) {
@@ -44,8 +65,19 @@ export default function VoteModal({ title, onClose, onSave, electionId = null, i
       if (name === 'electionLevel') {
         newState.electionType = '';
       }
+      if (name === 'state'){
+        newState.city = '';
+      }
       return newState;
     });
+  };
+
+  // New handler for autocomplete selections
+  const handleAutocompleteSelect = (name, value) => {
+    setFormData(prev => ({ ...prev, [name]: value }));
+    if (name === 'state') {
+       setFormData(prev => ({ ...prev, city: '' })); // Reset city when state changes
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -87,12 +119,14 @@ export default function VoteModal({ title, onClose, onSave, electionId = null, i
               <Input name="title" placeholder="Election Title" value={formData.title} onChange={handleChange} required />
               <Input name="description" placeholder="Description" value={formData.description} onChange={handleChange} />
               {/* Election Level Dropdown */}
+
               <select name="electionLevel" value={formData.electionLevel} onChange={handleChange} required className="w-full px-4 py-3 bg-white/80 backdrop-blur-sm border-2 border-gray-200 rounded-xl">
                 <option value="" disabled>Select Election Level</option>
                 {Object.keys(electionTypesByLevel).map(level => (
                   <option key={level} value={level}>{level}</option>
                 ))}
               </select>
+
               {/* Election Type Dropdown (conditional) */}
               {formData.electionLevel && (
                 <select name="electionType" value={formData.electionType} onChange={handleChange} required className="w-full px-4 py-3 bg-white/80 backdrop-blur-sm border-2 border-gray-200 rounded-xl">
@@ -102,9 +136,24 @@ export default function VoteModal({ title, onClose, onSave, electionId = null, i
                   ))}
                 </select>
               )}
-               {/* Location Inputs */}
-              <Input name="state" placeholder="State" value={formData.state} onChange={handleChange} required />
-              <Input name="city" placeholder="City" value={formData.city} onChange={handleChange} required />
+
+               {/* Location Inputs - REPLACED */}
+               <AutocompleteInput
+                 name="state"
+                 placeholder="State"
+                 value={formData.state}
+                 items={states}
+                 onSelect={(value) => handleAutocompleteSelect('state', value)}
+                 required
+               />
+               <AutocompleteInput
+                 name="city"
+                 placeholder="City"
+                 value={formData.city}
+                 items={cities}
+                 onSelect={(value) => handleAutocompleteSelect('city', value)}
+                 required
+               />
 
               <div>
                 <label className="block text-sm font-medium text-gray-700">Start Date</label>

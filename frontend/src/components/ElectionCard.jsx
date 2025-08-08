@@ -53,6 +53,7 @@ export default function ElectionCard({ election, hasVoted, onVoteSuccess }) {
     return (
       <div className="glass-effect rounded-2xl p-6 shadow-medium hover:shadow-large transition-all duration-300 flex flex-col h-full border border-white/20">
         <div className="flex items-start justify-between mb-4">
+
           <h3 className="text-xl font-bold text-gray-900">{election.title}</h3>
           <div className="flex items-center gap-2 bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-semibold">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -60,6 +61,14 @@ export default function ElectionCard({ election, hasVoted, onVoteSuccess }) {
             </svg>
             Voted
           </div>
+        </div>
+
+        <div className="flex items-center gap-2 text-sm text-gray-500 mb-4">
+            <svg className="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            <span className="font-semibold">{election.city}, {election.state}</span>
         </div>
         
         <div className="flex-grow flex flex-col items-center justify-center my-6">
@@ -118,6 +127,13 @@ export default function ElectionCard({ election, hasVoted, onVoteSuccess }) {
           </div>
         </div>
         <p className="text-gray-600 text-sm leading-relaxed">{election.description}</p>
+         <div className="flex items-center gap-2 text-sm text-gray-500 mb-4">
+          <svg className="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+          <span className="font-semibold">{election.city}, {election.state}</span>
+        </div>
       </div>
       
       {isElectionActive() ? (

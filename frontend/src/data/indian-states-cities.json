@@ -1,0 +1,28 @@
+{
+  "states": [
+    {
+      "name": "Andhra Pradesh",
+      "cities": ["Visakhapatnam", "Vijayawada", "Guntur", "Nellore", "Kurnool"]
+    },
+    {
+      "name": "Gujarat",
+      "cities": ["Ahmedabad", "Surat", "Vadodara", "Rajkot", "Bhavnagar"]
+    },
+    {
+      "name": "Karnataka",
+      "cities": ["Bengaluru", "Mysuru", "Hubballi-Dharwad", "Mangaluru", "Belagavi"]
+    },
+    {
+      "name": "Maharashtra",
+      "cities": ["Mumbai", "Dhule", "Pune", "Nagpur", "Thane", "Nashik", "Kolhapur"]
+    },
+    {
+      "name": "Tamil Nadu",
+      "cities": ["Chennai", "Coimbatore", "Madurai", "Tiruchirappalli", "Salem"]
+    },
+    {
+      "name": "Uttar Pradesh",
+      "cities": ["Lucknow", "Kanpur", "Ghaziabad", "Agra", "Varanasi"]
+    }
+  ]
+}
