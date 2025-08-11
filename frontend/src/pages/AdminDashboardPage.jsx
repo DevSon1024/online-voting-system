@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { getElections, getUserProfile } from '../services/api';
 import Spinner from '../components/common/Spinner';
 import Alert from '../components/common/Alert';
 import Button from '../components/common/Button';
 import AdminPanel from '../components/AdminPanel';
-import VoteModal from '../components/VoteModal'; // Re-using for elections
-import PartyModal from '../components/ManagePartiesModal';
+import VoteModal from '../components/VoteModal';
 import ManagePartiesModal from '../components/ManagePartiesModal';
 
 export default function AdminDashboardPage() {
@@ -36,7 +36,7 @@ export default function AdminDashboardPage() {
     fetchDashboardData();
   }, []);
 
-  const handleElectionUpdate = () => {
+  const handleUpdate = () => {
     fetchDashboardData();
   };
 
@@ -44,16 +44,6 @@ export default function AdminDashboardPage() {
 
   return (
     <div className="max-w-7xl mx-auto">
-      {/* Header Section */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-        {/* ... Stats ... */}
-        <Button 
-          onClick={() => setShowPartyModal(true)}
-          className="w-full sm:w-auto bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold py-3 px-6 rounded-xl"
-        >
-          Manage Parties
-        </Button>
-      </div>
       <div className="mb-8">
         <div className="glass-effect rounded-2xl p-8 shadow-medium">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
@@ -65,7 +55,7 @@ export default function AdminDashboardPage() {
               </div>
               <div>
                 <h1 className="text-4xl font-bold text-gray-900 mb-2">Admin Dashboard</h1>
-                <p className="text-gray-600">Manage elections, candidates, and view detailed results</p>
+                <p className="text-gray-600">Manage elections, candidates, parties, and users.</p>
                 {adminProfile && (
                   <div className="mt-3 flex flex-wrap items-center gap-4 text-sm">
                     <div className="flex items-center gap-2 bg-purple-50 text-purple-700 px-3 py-1 rounded-full">
@@ -85,38 +75,22 @@ export default function AdminDashboardPage() {
               </div>
             </div>
             
-            {/* Stats and Actions */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-              <div className="flex items-center gap-6">
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-indigo-600">{elections.length}</div>
-                  <div className="text-sm text-gray-500">Total Elections</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-green-600">
-                    {elections.filter(e => new Date(e.endDate) < new Date()).length}
-                  </div>
-                  <div className="text-sm text-gray-500">Completed</div>
-                </div>
-              </div>
-              <Button 
-                onClick={() => setShowElectionModal(true)} 
-                className="w-full sm:w-auto bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-xl shadow-medium hover:shadow-large transform hover:scale-105 transition-all duration-200"
-              >
-                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                </svg>
-                Add New Election
-              </Button>
+              <Button onClick={() => setShowElectionModal(true)} className="w-full sm:w-auto">Add Election</Button>
+              <Button onClick={() => setShowPartyModal(true)} className="w-full sm:w-auto" variant="secondary">Manage Parties</Button>
+              <Link to="/admin/users">
+                <Button className="w-full sm:w-auto" variant="secondary">Manage Users</Button>
+              </Link>
+              <Link to="/profile">
+                <Button className="w-full sm:w-auto" variant="ghost">Edit Profile</Button>
+              </Link>
             </div>
           </div>
         </div>
       </div>
       
-      {/* Alert */}
       <Alert message={error} type="error" />
       
-      {/* Elections Management */}
       {!error && elections.length > 0 ? (
         <div>
           <div className="mb-6">
@@ -125,7 +99,7 @@ export default function AdminDashboardPage() {
           </div>
           <div className="space-y-6">
             {elections.map(election => (
-              <AdminPanel key={election._id} election={election} onDataChange={handleElectionUpdate} />
+              <AdminPanel key={election._id} election={election} onDataChange={handleUpdate} />
             ))}
           </div>
         </div>
@@ -133,42 +107,16 @@ export default function AdminDashboardPage() {
         !loading && !error && (
           <div className="text-center py-16">
             <div className="glass-effect rounded-2xl p-12 shadow-medium">
-              <div className="inline-flex items-center justify-center w-20 h-20 gradient-secondary rounded-full mb-6 shadow-soft">
-                <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                </svg>
-              </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-3">No Elections Created</h3>
-              <p className="text-gray-600 max-w-md mx-auto mb-6">Get started by creating your first election. You can add candidates and manage the voting process.</p>
-              <Button 
-                onClick={() => setShowElectionModal(true)}
-                className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-xl shadow-medium hover:shadow-large transform hover:scale-105 transition-all duration-200"
-              >
-                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                </svg>
-                Create Your First Election
-              </Button>
+               <h3 className="text-2xl font-bold text-gray-900 mb-3">No Elections Created</h3>
+               <p className="text-gray-600 max-w-md mx-auto mb-6">Get started by creating your first election.</p>
+               <Button onClick={() => setShowElectionModal(true)}>Create First Election</Button>
             </div>
           </div>
         )
       )}
       
-      {/* Party Modal */}
-      {showPartyModal && (
-          <ManagePartiesModal
-              onClose={() => setShowPartyModal(false)}
-          />
-      )}
-
-      {/* Election Modal */}
-      {showElectionModal && (
-        <VoteModal
-          title="Add New Election"
-          onClose={() => setShowElectionModal(false)}
-          onSave={handleElectionUpdate}
-        />
-      )}
+      {showPartyModal && <ManagePartiesModal onClose={() => setShowPartyModal(false)} />}
+      {showElectionModal && <VoteModal title="Add New Election" onClose={() => setShowElectionModal(false)} onSave={handleUpdate} />}
     </div>
   );
 }

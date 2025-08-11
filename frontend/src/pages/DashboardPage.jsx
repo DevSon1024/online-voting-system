@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom'; // Import Link
 import { getElections, getUserVotedElections, getUserProfile } from '../services/api';
 import Spinner from '../components/common/Spinner';
 import Alert from '../components/common/Alert';
 import ElectionCard from '../components/ElectionCard';
+import Button from '../components/common/Button'; // Import Button
 
 export default function DashboardPage() {
   const [elections, setElections] = useState([]);
@@ -13,7 +15,6 @@ export default function DashboardPage() {
 
   const fetchDashboardData = async () => {
     try {
-      // Use Promise.all to fetch elections, user's vote history, and profile concurrently
       const [electionsRes, votedRes, profileRes] = await Promise.all([
         getElections(),
         getUserVotedElections(),
@@ -21,7 +22,7 @@ export default function DashboardPage() {
       ]);
       
       setElections(electionsRes.data);
-      setVotedElectionIds(new Set(votedRes.data.map(String))); // Store IDs as strings for easy comparison
+      setVotedElectionIds(new Set(votedRes.data.map(String)));
       setUserProfile(profileRes.data);
       
     } catch (err) {
@@ -36,7 +37,6 @@ export default function DashboardPage() {
     fetchDashboardData();
   }, []);
   
-  // This function will now just refetch all data to get the latest state
   const handleVoteSuccess = () => {
     fetchDashboardData(); 
   };
@@ -45,10 +45,9 @@ export default function DashboardPage() {
 
   return (
     <div className="max-w-7xl mx-auto">
-      {/* Header Section */}
       <div className="mb-8">
         <div className="glass-effect rounded-2xl p-8 shadow-medium">
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
             <div className="flex items-center gap-4">
               <div className="gradient-primary rounded-2xl p-3 shadow-soft">
                 <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -59,7 +58,7 @@ export default function DashboardPage() {
                 <h1 className="text-4xl font-bold text-gray-900 mb-2">Elections Dashboard</h1>
                 <p className="text-gray-600">Participate in active elections and view your voting history</p>
                 {userProfile && (
-                  <div className="mt-3 flex items-center gap-4 text-sm">
+                  <div className="mt-3 flex flex-wrap items-center gap-4 text-sm">
                     <div className="flex items-center gap-2 bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -77,37 +76,19 @@ export default function DashboardPage() {
               </div>
             </div>
             
-            {/* Stats */}
-            <div className="hidden md:flex items-center gap-6">
-              <div className="text-center">
-                <div className="text-2xl font-bold text-indigo-600">{elections.length}</div>
-                <div className="text-sm text-gray-500">Total Elections</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-green-600">{votedElectionIds.size}</div>
-                <div className="text-sm text-gray-500">Votes Cast</div>
-              </div>
-            </div>
-          </div>
-          
-          {/* Mobile Stats */}
-          <div className="md:hidden flex justify-center gap-8 mt-6 pt-6 border-t border-gray-200">
-            <div className="text-center">
-              <div className="text-xl font-bold text-indigo-600">{elections.length}</div>
-              <div className="text-sm text-gray-500">Total Elections</div>
-            </div>
-            <div className="text-center">
-              <div className="text-xl font-bold text-green-600">{votedElectionIds.size}</div>
-              <div className="text-sm text-gray-500">Votes Cast</div>
+            <div className="flex items-center gap-4">
+               <Link to="/profile">
+                 <Button className="w-full sm:w-auto">
+                   Edit Profile
+                 </Button>
+               </Link>
             </div>
           </div>
         </div>
       </div>
       
-      {/* Alert */}
       <Alert message={error} type="error" />
       
-      {/* Elections Grid */}
       {!error && elections.length > 0 ? (
         <div>
           <div className="mb-6">

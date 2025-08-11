@@ -19,26 +19,30 @@ api.interceptors.request.use((config) => {
 export const registerUser = (userData) => api.post('/auth/register', userData);
 export const loginUser = (credentials) => api.post('/auth/login', credentials);
 
+// --- User Profile Service ---
+export const getUserProfile = () => api.get('/user/profile');
+export const updateUserProfile = (userData) => api.put('/user/profile', userData);
+export const deleteUserProfile = () => api.delete('/user/profile');
+
 // --- Election Service (Public) ---
 export const getElections = () => api.get('/elections');
 export const getElectionResults = (electionId) => api.get(`/results/${electionId}`);
 
 // --- Vote Service (Voter) ---
 export const castVote = (electionId, candidateId) => api.post(`/vote/${electionId}`, { candidateId });
-// **NEW FUNCTION**
 export const getUserVotedElections = () => api.get('/user/voted-elections');
-export const getUserProfile = () => api.get('/user/profile');
 export const getUserVoteDetails = (electionId) => api.get(`/user/vote-details/${electionId}`);
-export const getAdminElectionResults = (electionId) => api.get(`/admin/election-results/${electionId}`);
 
 // --- Admin Service ---
 export const addElection = (electionData) => api.post('/admin/elections', electionData);
 export const deleteElection = (electionId) => api.delete(`/admin/elections/${electionId}`);
 export const addCandidate = (candidateData) => api.post('/admin/candidates', candidateData);
 export const deleteCandidate = (candidateId) => api.delete(`/admin/candidates/${candidateId}`);
-
+export const getAdminElectionResults = (electionId) => api.get(`/admin/election-results/${electionId}`);
 export const addParty = (formData) => api.post('/admin/parties', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
 export const getParties = () => api.get('/admin/parties');
-
 export const updateParty = (id, formData) => api.put(`/admin/parties/${id}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
 export const deleteParty = (id) => api.delete(`/admin/parties/${id}`);
+export const getAllUsers = () => api.get('/admin/users'); // New
+export const adminDeleteUser = (userId) => api.delete(`/admin/users/${userId}`); // New
+

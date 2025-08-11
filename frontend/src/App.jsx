@@ -10,6 +10,8 @@ import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 import ResultsPage from './pages/ResultsPage';
+import ProfilePage from './pages/ProfilePage'; // New
+import UserManagementPage from './pages/UserManagementPage'; // New
 
 // Protected Route Wrappers
 const ProtectedRoute = () => {
@@ -37,14 +39,16 @@ export default function App() {
               <Route path="/register" element={<RegisterPage />} />
               <Route path="/results/:electionId" element={<ResultsPage />} />
 
-              {/* Protected Voter Routes */}
+              {/* Protected User and Admin Routes */}
               <Route element={<ProtectedRoute />}>
                 <Route path="/dashboard" element={<DashboardPage />} />
+                <Route path="/profile" element={<ProfilePage />} />
               </Route>
 
-              {/* Protected Admin Routes */}
+              {/* Protected Admin Only Routes */}
               <Route element={<AdminRoute />}>
                 <Route path="/admin" element={<AdminDashboardPage />} />
+                <Route path="/admin/users" element={<UserManagementPage />} />
               </Route>
               
               {/* Fallback Route */}
