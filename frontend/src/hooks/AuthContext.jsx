@@ -33,11 +33,8 @@ export const AuthProvider = ({ children }) => {
     setUser(payload.user);
   };
 
-  const register = async (userData) => {
-    const { data } = await registerUser(userData);
-    localStorage.setItem('token', data.token);
-    const payload = JSON.parse(atob(data.token.split('.')[1]));
-    setUser(payload.user);
+   const register = async (formData) => {
+    await registerUserService(formData);
   };
 
   const logout = () => {

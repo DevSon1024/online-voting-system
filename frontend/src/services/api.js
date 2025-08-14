@@ -43,6 +43,8 @@ export const addParty = (formData) => api.post('/admin/parties', formData, { hea
 export const getParties = () => api.get('/admin/parties');
 export const updateParty = (id, formData) => api.put(`/admin/parties/${id}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
 export const deleteParty = (id) => api.delete(`/admin/parties/${id}`);
-export const getAllUsers = () => api.get('/admin/users'); // New
-export const adminDeleteUser = (userId) => api.delete(`/admin/users/${userId}`); // New
+export const getUnvalidatedUsers = () => api.get('/admin/unvalidated-users');
+export const validateUser = (userId) => api.put(`/admin/validate-user/${userId}`);
+export const getAllUsers = () => api.get('/admin/users');
+export const adminDeleteUser = (userId) => api.delete(`/admin/users/${userId}`);
 

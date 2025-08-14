@@ -5,6 +5,7 @@ import Spinner from '../components/common/Spinner';
 import Alert from '../components/common/Alert';
 import ElectionCard from '../components/ElectionCard';
 import Button from '../components/common/Button'; // Import Button
+import Toast from '../components/common/Toast';
 
 export default function DashboardPage() {
   const [elections, setElections] = useState([]);
@@ -12,6 +13,11 @@ export default function DashboardPage() {
   const [userProfile, setUserProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [toast, setToast] = useState({ message: '', type: 'success' });
+
+  const showToast = (message, type = 'success') => {
+    setToast({ message, type });
+  };
 
   const fetchDashboardData = async () => {
     try {
@@ -38,7 +44,8 @@ export default function DashboardPage() {
   }, []);
   
   const handleVoteSuccess = () => {
-    fetchDashboardData(); 
+    fetchDashboardData();
+    showToast('Vote submitted successfully!');
   };
 
   if (loading) return <Spinner />;
@@ -97,13 +104,13 @@ export default function DashboardPage() {
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {elections.map(election => (
-              <ElectionCard 
-                key={election._id} 
-                election={election} 
-                hasVoted={votedElectionIds.has(election._id)} 
-                onVoteSuccess={handleVoteSuccess} 
-              />
-            ))}
+            <ElectionCard 
+              key={election._id} 
+              election={election} 
+              hasVoted={votedElectionIds.has(election._id)} 
+              onVoteSuccess={handleVoteSuccess} 
+            />
+          ))}
           </div>
         </div>
       ) : (
@@ -121,6 +128,7 @@ export default function DashboardPage() {
           </div>
         )
       )}
+      <Toast message={toast.message} type={toast.type} onDone={() => setToast({ message: '', type: 'success' })} />
     </div>
   );
 }

@@ -11,6 +11,7 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const { login, isAuthenticated, isAdmin } = useAuth();
   const navigate = useNavigate();
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -31,14 +32,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-[80vh] flex items-center justify-center py-12 px-4">
       <div className="max-w-md w-full">
-        {/* Background decoration */}
-        {/* <div className="absolute inset-0 -z-10 overflow-hidden">
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 gradient-primary rounded-full mix-blend-multiply filter blur-xl opacity-10 animate-pulse"></div>
-          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 gradient-secondary rounded-full mix-blend-multiply filter blur-xl opacity-10 animate-pulse animation-delay-2000"></div>
-        </div> */}
-        
         <div className="glass-effect rounded-3xl p-8 shadow-large">
-          {/* Header */}
           <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center w-16 h-16 gradient-primary rounded-2xl mb-4 shadow-medium">
               <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -49,7 +43,6 @@ export default function LoginPage() {
             <p className="text-gray-600">Sign in to access your voting dashboard</p>
           </div>
           
-          {/* Form */}
           <form className="space-y-6" onSubmit={handleSubmit}>
             <Alert message={error} />
             
@@ -68,15 +61,23 @@ export default function LoginPage() {
               </div>
               
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Password
-                </label>
+                <div className="flex items-center justify-between mb-2">
+                    <label className="block text-sm font-semibold text-gray-700">
+                      Password
+                    </label>
+                    <Link to="/forgot-password"
+                      className="text-sm font-medium text-indigo-600 hover:text-indigo-500">
+                      Forgot your password?
+                    </Link>
+                </div>
                 <Input 
                   type="password" 
                   value={password} 
                   onChange={e => setPassword(e.target.value)} 
                   placeholder="Enter your password" 
                   required 
+                  isPasswordVisible={isPasswordVisible} 
+                  onToggleVisibility={() => setIsPasswordVisible(!isPasswordVisible)} 
                 />
               </div>
             </div>
@@ -89,7 +90,6 @@ export default function LoginPage() {
             </Button>
           </form>
           
-          {/* Footer */}
           <div className="mt-8 text-center">
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
