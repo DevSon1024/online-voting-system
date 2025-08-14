@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { AuthProvider, useAuth } from './hooks/AuthContext';
+import Toast from './components/common/Toast';
 
 // Layouts and Pages
 import Navbar from './components/layout/Navbar';
@@ -26,6 +27,11 @@ const AdminRoute = () => {
 };
 
 export default function App() {
+  const [toast, setToast] = useState({ message: '', type: 'success' });
+
+  const showToast = (message, type = 'success') => {
+    setToast({ message, type });
+  };
   return (
     <AuthProvider>
       <BrowserRouter>
@@ -56,6 +62,7 @@ export default function App() {
             </Routes>
           </main>
           <Footer />
+          <Toast message={toast.message} type={toast.type} onDone={() => setToast({ message: '', type: 'success' })} />
         </div>
       </BrowserRouter>
     </AuthProvider>

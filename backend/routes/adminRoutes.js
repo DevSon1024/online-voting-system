@@ -28,8 +28,35 @@ const upload = multer({ storage: storage });
 // GET /api/admin/users (Get all users)
 adminRouter.get('/users', [authMiddleware, adminMiddleware], async (req, res) => {
     try {
-        const users = await User.find().select('-password');
+        const users = await User.find({ validated: true }).select('-password');
         res.json(users);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+});
+
+// GET /api/admin/unvalidated-users
+adminRouter.get('/unvalidated-users', [authMiddleware, adminMiddleware], async (req, res) => {
+    try {
+        const users = await User.find({ validated: false }).select('-password');
+        res.json(users);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+});
+
+// PUT /api/admin/validate-user/:id
+adminRouter.put('/validate-user/:id', [authMiddleware, adminMiddleware], async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id);
+        if (!user) {
+            return res.status(404).json({ msg: 'User not found' });
+        }
+        user.validated = true;
+        await user.save();
+        res.json({ msg: 'User validated successfully' });
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server Error');
@@ -43,12 +70,10 @@ adminRouter.delete('/users/:id', [authMiddleware, adminMiddleware], async (req, 
         if (!user) {
             return res.status(404).json({ msg: 'User not found' });
         }
-        // Prevent admin from deleting themselves
         if (user.id === req.user.id) {
             return res.status(400).json({ msg: 'Admin cannot delete their own account.' });
         }
         
-        // Also delete user's votes
         await Vote.deleteMany({ voter: req.params.id });
         await user.deleteOne();
 
@@ -58,7 +83,6 @@ adminRouter.delete('/users/:id', [authMiddleware, adminMiddleware], async (req, 
         res.status(500).send('Server Error');
     }
 });
-
 
 // --- Elections CRUD ---
 // ... (no changes to election CRUD routes)

@@ -5,7 +5,12 @@ const userSchema = new mongoose.Schema({
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    role: { type: String, enum: ['voter', 'admin'], default: 'voter' }
+    role: { type: String, enum: ['voter', 'admin'], default: 'voter' },
+    city: { type: String, required: true },
+    state: { type: String, required: true },
+    dob: { type: Date, required: true },
+    photoUrl: { type: String },
+    validated: { type: Boolean, default: false }
 });
 
 const User = mongoose.model('User', userSchema);

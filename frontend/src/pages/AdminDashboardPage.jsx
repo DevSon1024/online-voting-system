@@ -79,7 +79,7 @@ export default function AdminDashboardPage() {
               <Button onClick={() => setShowElectionModal(true)} className="w-full sm:w-auto">Add Election</Button>
               <Button onClick={() => setShowPartyModal(true)} className="w-full sm:w-auto" variant="secondary">Manage Parties</Button>
               <Link to="/admin/users">
-                <Button className="w-full sm:w-auto" variant="secondary">Manage Users</Button>
+                <Button className="w-full sm:w-auto" variant="secondary">User Management</Button>
               </Link>
               <Link to="/profile">
                 <Button className="w-full sm:w-auto" variant="ghost">Edit Profile</Button>

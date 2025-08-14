@@ -42,7 +42,8 @@ export default function ElectionCard({ election, hasVoted, onVoteSuccess }) {
     }
     try {
       await castVote(election._id, selectedCandidate);
-      onVoteSuccess(); // Trigger refetch in the parent component
+      onVoteSuccess(); // This will trigger a refetch in DashboardPage
+      // And now, you can also show a toast from the parent.
     } catch (err) {
       setError(err.response?.data?.msg || 'An error occurred while voting.');
     }
