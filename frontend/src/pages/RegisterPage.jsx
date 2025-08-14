@@ -72,7 +72,6 @@ export default function RegisterPage() {
     try {
       await register(formData);
       setSuccess('Registration successful! Please wait for an administrator to validate your account.');
-      showToast('Registration successful!'); // This would be triggered from App.jsx now
     } catch (err) {
       setError(err.response?.data?.msg || 'Registration failed. Please try again.');
     }

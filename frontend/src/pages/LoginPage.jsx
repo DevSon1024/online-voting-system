@@ -24,7 +24,6 @@ export default function LoginPage() {
     setError('');
     try {
       await login({ email, password });
-      showToast('Signed in successfully!'); // This would be triggered from App.jsx now
     } catch (err) {
       setError(err.response?.data?.msg || 'Login failed. Check your connection or credentials.');
     }
@@ -33,11 +32,6 @@ export default function LoginPage() {
   return (
     <div className="min-h-[80vh] flex items-center justify-center py-12 px-4">
       <div className="max-w-md w-full">
-        {/* Background decoration */}
-        {/* <div className="absolute inset-0 -z-10 overflow-hidden">
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 gradient-primary rounded-full mix-blend-multiply filter blur-xl opacity-10 animate-pulse"></div>
-          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 gradient-secondary rounded-full mix-blend-multiply filter blur-xl opacity-10 animate-pulse animation-delay-2000"></div>
-        </div> */}
         <div className="glass-effect rounded-3xl p-8 shadow-large">
           <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center w-16 h-16 gradient-primary rounded-2xl mb-4 shadow-medium">
