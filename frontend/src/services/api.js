@@ -4,7 +4,6 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 const api = axios.create({
   baseURL: API_URL,
-  headers: { 'Content-Type': 'application/json' },
 });
 
 api.interceptors.request.use((config) => {
@@ -16,8 +15,13 @@ api.interceptors.request.use((config) => {
 }, (error) => Promise.reject(error));
 
 // --- Auth Service ---
-export const registerUser = (userData) => api.post('/auth/register', userData);
-export const loginUser = (credentials) => api.post('/auth/login', credentials);
+// By removing the headers config, the browser will automatically set the correct Content-Type with the boundary
+export const registerUser = (formData) => api.post('/auth/register', formData);
+
+export const loginUser = (credentials) => api.post('/auth/login', credentials, {
+  headers: { 'Content-Type': 'application/json' },
+});
+
 
 // --- User Profile Service ---
 export const getUserProfile = () => api.get('/user/profile');
@@ -47,4 +51,3 @@ export const getUnvalidatedUsers = () => api.get('/admin/unvalidated-users');
 export const validateUser = (userId) => api.put(`/admin/validate-user/${userId}`);
 export const getAllUsers = () => api.get('/admin/users');
 export const adminDeleteUser = (userId) => api.delete(`/admin/users/${userId}`);
-

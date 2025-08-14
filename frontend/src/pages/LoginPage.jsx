@@ -5,7 +5,7 @@ import Alert from '../components/common/Alert';
 import Input from '../components/common/Input';
 import Button from '../components/common/Button';
 
-export default function LoginPage() {
+export default function LoginPage({ showToast }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -24,6 +24,7 @@ export default function LoginPage() {
     setError('');
     try {
       await login({ email, password });
+      showToast('Signed in successfully!');
     } catch (err) {
       setError(err.response?.data?.msg || 'Login failed. Check your connection or credentials.');
     }

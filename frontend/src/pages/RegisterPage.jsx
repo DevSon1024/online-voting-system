@@ -7,7 +7,7 @@ import Button from '../components/common/Button';
 import AutocompleteInput from '../components/common/AutocompleteInput';
 import statesData from '../data/indian-states-cities.json';
 
-export default function RegisterPage() {
+export default function RegisterPage({ showToast }) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -72,6 +72,7 @@ export default function RegisterPage() {
     try {
       await register(formData);
       setSuccess('Registration successful! Please wait for an administrator to validate your account.');
+      showToast('Registration successful!');
     } catch (err) {
       setError(err.response?.data?.msg || 'Registration failed. Please try again.');
     }

@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { AuthProvider, useAuth } from './hooks/AuthContext';
 import Toast from './components/common/Toast';
@@ -11,8 +12,8 @@ import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 import ResultsPage from './pages/ResultsPage';
-import ProfilePage from './pages/ProfilePage'; // New
-import UserManagementPage from './pages/UserManagementPage'; // New
+import ProfilePage from './pages/ProfilePage';
+import UserManagementPage from './pages/UserManagementPage';
 
 // Protected Route Wrappers
 const ProtectedRoute = () => {
@@ -41,8 +42,8 @@ export default function App() {
             <Routes>
               {/* Public Routes */}
               <Route path="/" element={<HomePage />} />
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/register" element={<RegisterPage />} />
+              <Route path="/login" element={<LoginPage showToast={showToast} />} />
+              <Route path="/register" element={<RegisterPage showToast={showToast} />} />
               <Route path="/results/:electionId" element={<ResultsPage />} />
 
               {/* Protected User and Admin Routes */}

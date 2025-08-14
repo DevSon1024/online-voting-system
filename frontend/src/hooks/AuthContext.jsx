@@ -12,7 +12,6 @@ export const AuthProvider = ({ children }) => {
     if (token) {
       try {
         const payload = JSON.parse(atob(token.split('.')[1]));
-        // Check if token is expired
         if (payload.exp * 1000 > Date.now()) {
           setUser(payload.user);
         } else {
@@ -34,7 +33,8 @@ export const AuthProvider = ({ children }) => {
   };
 
    const register = async (formData) => {
-    await registerUserService(formData);
+    // Ensure this calls registerUser
+    await registerUser(formData);
   };
 
   const logout = () => {

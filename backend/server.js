@@ -22,8 +22,12 @@ const app = express();
 app.use(cors());
 app.use(express.json()); // for parsing application/json
 
-// --- Serve static files for logos ---
+// ADD THIS LINE to parse URL-encoded bodies
+app.use(express.urlencoded({ extended: true }));
+
+// --- Serve static files for logos and photos ---
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/uploads/photos', express.static(path.join(__dirname, 'uploads/photos')));
 
 // --- Database Connection ---
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/online-voting-system';
