@@ -7,6 +7,7 @@ import Button from '../components/common/Button';
 import AdminPanel from '../components/AdminPanel';
 import VoteModal from '../components/VoteModal';
 import ManagePartiesModal from '../components/ManagePartiesModal';
+import ManageVotersModal from '../components/ManageVotersModal';
 
 export default function AdminDashboardPage() {
   const [elections, setElections] = useState([]);
@@ -15,6 +16,7 @@ export default function AdminDashboardPage() {
   const [error, setError] = useState('');
   const [showElectionModal, setShowElectionModal] = useState(false);
   const [showPartyModal, setShowPartyModal] = useState(false);
+  const [showVoterModal, setShowVoterModal] = useState(false);
 
   const fetchDashboardData = async () => {
     setLoading(true);
@@ -78,6 +80,7 @@ export default function AdminDashboardPage() {
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
               <Button onClick={() => setShowElectionModal(true)} className="w-full sm:w-auto">Add Election</Button>
               <Button onClick={() => setShowPartyModal(true)} className="w-full sm:w-auto" variant="secondary">Manage Parties</Button>
+              <Button onClick={() => setShowVoterModal(true)} className="w-full sm:w-auto" variant="secondary">Manage Voters</Button>
               <Link to="/admin/users">
                 <Button className="w-full sm:w-auto" variant="secondary">User Management</Button>
               </Link>
@@ -117,6 +120,7 @@ export default function AdminDashboardPage() {
       
       {showPartyModal && <ManagePartiesModal onClose={() => setShowPartyModal(false)} />}
       {showElectionModal && <VoteModal title="Add New Election" onClose={() => setShowElectionModal(false)} onSave={handleUpdate} />}
+      {showVoterModal && <ManageVotersModal onClose={() => setShowVoterModal(false)} />}
     </div>
   );
 }

@@ -2,11 +2,12 @@ const express = require('express');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const bcrypt = require('bcryptjs'); // Import bcryptjs
 const { Election } = require('../models/Election');
 const { Candidate } = require('../models/Candidate');
 const { Vote } = require('../models/Vote');
 const { Party } = require('../models/Party');
-const { User } = require('../models/User'); // New
+const { User } = require('../models/User'); 
 const { authMiddleware, adminMiddleware } = require('../middleware/authMiddleware');
 
 const adminRouter = express.Router();
@@ -78,6 +79,32 @@ adminRouter.delete('/users/:id', [authMiddleware, adminMiddleware], async (req, 
         await user.deleteOne();
 
         res.json({ msg: 'User and associated votes deleted successfully' });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+});
+
+// NEW ROUTE: Reset a user's password
+adminRouter.put('/users/:id/reset-password', [authMiddleware, adminMiddleware], async (req, res) => {
+    const { newPassword } = req.body;
+
+    if (!newPassword || newPassword.length < 6) {
+        return res.status(400).json({ msg: 'Password must be at least 6 characters long.' });
+    }
+
+    try {
+        const user = await User.findById(req.params.id);
+        if (!user) {
+            return res.status(404).json({ msg: 'User not found' });
+        }
+
+        const salt = await bcrypt.genSalt(10);
+        user.password = await bcrypt.hash(newPassword, salt);
+        
+        await user.save();
+
+        res.json({ msg: `Password for ${user.name} has been reset successfully.` });
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server Error');

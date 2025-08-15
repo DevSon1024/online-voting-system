@@ -62,15 +62,6 @@ export default function LoginPage({ showToast }) {
               </div>
               
               <div>
-                <div className="flex items-center justify-between mb-2">
-                    <label className="block text-sm font-semibold text-gray-700">
-                      Password
-                    </label>
-                    <Link to="/forgot-password"
-                      className="text-sm font-medium text-indigo-600 hover:text-indigo-500">
-                      Forgot your password?
-                    </Link>
-                </div>
                 <Input 
                   type="password" 
                   value={password} 
@@ -81,6 +72,15 @@ export default function LoginPage({ showToast }) {
                   onToggleVisibility={() => setIsPasswordVisible(!isPasswordVisible)} 
                 />
               </div>
+                <div className="flex items-center justify-between mb-2">
+                    <label className="block text-sm font-semibold text-gray-700">
+                      Password
+                    </label>
+                    <Link to="/forgot-password"
+                      className="text-sm font-medium text-indigo-600 hover:text-indigo-500">
+                      Forgot your password?
+                    </Link>
+                </div>
             </div>
             
             <Button type="submit" className="mt-6">

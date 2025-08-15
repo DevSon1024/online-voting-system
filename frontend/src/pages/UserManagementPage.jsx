@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getAllUsers, adminDeleteUser, getUnvalidatedUsers, validateUser } from '../services/api';
+import { getAllUsers, adminDeleteUser, getUnvalidatedUsers, validateUser, adminResetPassword } from '../services/api'; // Import adminResetPassword
 import Spinner from '../components/common/Spinner';
 import Alert from '../components/common/Alert';
 import Button from '../components/common/Button';
@@ -56,6 +56,24 @@ export default function UserManagementPage() {
     }
   };
 
+  const handleResetPassword = async (userId, userName) => {
+    const newPassword = prompt(`Enter a new temporary password for ${userName}:`);
+    if (newPassword) {
+      if (newPassword.length < 6) {
+        setError("Password must be at least 6 characters long.");
+        return;
+      }
+      try {
+        const res = await adminResetPassword(userId, newPassword);
+        setSuccess(res.data.msg);
+        setError('');
+      } catch (err) {
+        setError(err.response?.data?.msg || 'Failed to reset password.');
+        setSuccess('');
+      }
+    }
+  };
+
   if (loading) return <Spinner />;
 
   return (
@@ -77,7 +95,33 @@ export default function UserManagementPage() {
 
       {activeTab === 'validated' && (
         <div className="bg-white rounded-xl shadow-md overflow-hidden">
-          {/* Table for validated users */}
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {users.map(user => (
+                  <tr key={user._id}>
+                    <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">{user.name}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-gray-500">{user.email}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
+                       <Button onClick={() => handleResetPassword(user._id, user.name)} variant="secondary" className="w-auto px-3 py-1 text-xs">
+                        Reset Password
+                      </Button>
+                      <Button onClick={() => handleDeleteUser(user._id, user.name)} variant="danger" className="w-auto px-3 py-1 text-xs">
+                        Delete
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 

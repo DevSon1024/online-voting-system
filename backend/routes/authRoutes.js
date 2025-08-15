@@ -153,6 +153,10 @@ authRouter.post('/login', async (req, res) => {
             return res.status(400).json({ msg: 'Invalid credentials' });
         }
 
+        if (!user.validated) {
+            return res.status(401).json({ msg: 'Admin has not approved your request' });
+        }
+
         const payload = { user: { id: user.id, role: user.role } };
         jwt.sign(payload, process.env.JWT_SECRET || 'your_jwt_secret', { expiresIn: 3600 }, (err, token) => {
             if (err) throw err;
