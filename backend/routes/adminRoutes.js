@@ -37,6 +37,47 @@ adminRouter.get('/users', [authMiddleware, adminMiddleware], async (req, res) =>
     }
 });
 
+// GET /api/admin/user/:id (Get single user by ID)
+adminRouter.get('/user/:id', [authMiddleware, adminMiddleware], async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id).select('-password');
+        if (!user) {
+            return res.status(404).json({ msg: 'User not found' });
+        }
+        res.json(user);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+});
+
+// PUT /api/admin/user/:id (Update a user's details)
+adminRouter.put('/user/:id', [authMiddleware, adminMiddleware, upload.single('photo')], async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id);
+        if (!user) {
+            return res.status(404).json({ msg: 'User not found' });
+        }
+
+        const { name, email, state, city, dob } = req.body;
+        if (name) user.name = name;
+        if (email) user.email = email;
+        if (state) user.state = state;
+        if (city) user.city = city;
+        if (dob) user.dob = dob;
+
+        if (req.file) {
+            user.photoUrl = `/uploads/${req.file.filename}`;
+        }
+
+        await user.save();
+        res.json(user);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+});
+
 // GET /api/admin/unvalidated-users
 adminRouter.get('/unvalidated-users', [authMiddleware, adminMiddleware], async (req, res) => {
     try {

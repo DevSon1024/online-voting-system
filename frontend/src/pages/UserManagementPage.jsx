@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { getAllUsers, adminDeleteUser, getUnvalidatedUsers, validateUser, adminResetPassword } from '../services/api'; // Import adminResetPassword
+import { Link } from 'react-router-dom';
+import { getAllUsers, adminDeleteUser, getUnvalidatedUsers, validateUser, adminResetPassword } from '../services/api';
 import Spinner from '../components/common/Spinner';
 import Alert from '../components/common/Alert';
 import Button from '../components/common/Button';
@@ -110,12 +111,14 @@ export default function UserManagementPage() {
                     <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">{user.name}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-gray-500">{user.email}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
-                       <Button onClick={() => handleResetPassword(user._id, user.name)} variant="secondary" className="w-auto px-3 py-1 text-xs">
-                        Reset Password
-                      </Button>
-                      <Button onClick={() => handleDeleteUser(user._id, user.name)} variant="danger" className="w-auto px-3 py-1 text-xs">
+                      <Link to={`/admin/user/${user._id}`}>
+                        <Button variant="secondary" className="w-auto px-3 py-1 text-xs">
+                          View Details
+                        </Button>
+                      </Link>
+                      {/* <Button onClick={() => handleDeleteUser(user._id, user.name)} variant="danger" className="w-auto px-3 py-1 text-xs">
                         Delete
-                      </Button>
+                      </Button> */}
                     </td>
                   </tr>
                 ))}

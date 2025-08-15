@@ -14,6 +14,7 @@ import AdminDashboardPage from './pages/AdminDashboardPage';
 import ResultsPage from './pages/ResultsPage';
 import ProfilePage from './pages/ProfilePage';
 import UserManagementPage from './pages/UserManagementPage';
+import UserDetailPage from './pages/UserDetailPage';
 
 // Protected Route Wrappers
 const ProtectedRoute = () => {
@@ -56,6 +57,7 @@ export default function App() {
               <Route element={<AdminRoute />}>
                 <Route path="/admin" element={<AdminDashboardPage />} />
                 <Route path="/admin/users" element={<UserManagementPage />} />
+                <Route path="/admin/user/:userId" element={<UserDetailPage />} />
               </Route>
               
               {/* Fallback Route */}

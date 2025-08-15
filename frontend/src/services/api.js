@@ -25,7 +25,9 @@ export const loginUser = (credentials) => api.post('/auth/login', credentials, {
 
 // --- User Profile Service ---
 export const getUserProfile = () => api.get('/user/profile');
-export const updateUserProfile = (userData) => api.put('/user/profile', userData);
+export const updateUserProfile = (formData) => api.put('/user/profile', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+});
 export const deleteUserProfile = () => api.delete('/user/profile');
 
 // --- Election Service (Public) ---
@@ -50,5 +52,7 @@ export const deleteParty = (id) => api.delete(`/admin/parties/${id}`);
 export const getUnvalidatedUsers = () => api.get('/admin/unvalidated-users');
 export const validateUser = (userId) => api.put(`/admin/validate-user/${userId}`);
 export const getAllUsers = () => api.get('/admin/users');
+export const getSingleUser = (userId) => api.get(`/admin/user/${userId}`);
+export const adminUpdateUser = (userId, userData) => api.put(`/admin/user/${userId}`, userData);
 export const adminDeleteUser = (userId) => api.delete(`/admin/users/${userId}`);
-export const adminResetPassword = (userId, newPassword) => api.put(`/admin/users/${userId}/reset-password`, { newPassword }); // New function
+export const adminResetPassword = (userId, newPassword) => api.put(`/admin/users/${userId}/reset-password`, { newPassword });

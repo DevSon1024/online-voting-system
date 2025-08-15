@@ -1,9 +1,24 @@
 const express = require('express');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
 const { User } = require('../models/User');
 const { Vote } = require('../models/Vote');
 const { authMiddleware } = require('../middleware/authMiddleware');
 
 const userRouter = express.Router();
+
+// Multer setup for photo uploads
+const uploadDir = path.join(__dirname, '..', 'uploads/photos');
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+}
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => cb(null, uploadDir),
+    filename: (req, file, cb) => cb(null, `user-${Date.now()}${path.extname(file.originalname)}`)
+});
+const upload = multer({ storage });
+
 
 // GET /api/user/profile (Get current user's profile)
 userRouter.get('/profile', authMiddleware, async (req, res) => {
@@ -20,19 +35,33 @@ userRouter.get('/profile', authMiddleware, async (req, res) => {
 });
 
 // PUT /api/user/profile (Update current user's profile)
-userRouter.put('/profile', authMiddleware, async (req, res) => {
-    const { name, email } = req.body;
+userRouter.put('/profile', [authMiddleware, upload.single('photo')], async (req, res) => {
     try {
         const user = await User.findById(req.user.id);
         if (!user) {
             return res.status(404).json({ msg: 'User not found' });
         }
 
-        user.name = name || user.name;
-        user.email = email || user.email;
+        // Update text fields from req.body
+        const { name, email, state, city, dob } = req.body;
+        if (name) user.name = name;
+        if (email) user.email = email;
+        if (state) user.state = state;
+        if (city) user.city = city;
+        if (dob) user.dob = dob;
+
+        // Update photo if a new one is uploaded
+        if (req.file) {
+            user.photoUrl = `/uploads/photos/${req.file.filename}`;
+        }
 
         await user.save();
-        res.json(user);
+        
+        // Return user data without the password
+        const userResponse = user.toObject();
+        delete userResponse.password;
+
+        res.json(userResponse);
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server Error');

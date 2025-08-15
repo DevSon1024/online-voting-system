@@ -4,6 +4,7 @@ export default function AutocompleteInput({ name, value, placeholder, items, onS
   const [inputValue, setInputValue] = useState(value || '');
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [activeSuggestionIndex, setActiveSuggestionIndex] = useState(-1); // To track highlighted suggestion
   const wrapperRef = useRef(null);
 
   useEffect(() => {
@@ -32,6 +33,7 @@ export default function AutocompleteInput({ name, value, placeholder, items, onS
       );
       setSuggestions(filteredSuggestions);
       setShowSuggestions(true);
+      setActiveSuggestionIndex(-1); // Reset active suggestion
     } else {
       setSuggestions([]);
       setShowSuggestions(false);
@@ -43,6 +45,35 @@ export default function AutocompleteInput({ name, value, placeholder, items, onS
     onSelect(suggestion);
     setSuggestions([]);
     setShowSuggestions(false);
+    setActiveSuggestionIndex(-1);
+  };
+  
+  const handleKeyDown = (e) => {
+    // Arrow Down
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setActiveSuggestionIndex((prevIndex) =>
+        prevIndex < suggestions.length - 1 ? prevIndex + 1 : 0
+      );
+    } 
+    // Arrow Up
+    else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setActiveSuggestionIndex((prevIndex) =>
+        prevIndex > 0 ? prevIndex - 1 : suggestions.length - 1
+      );
+    } 
+    // Enter
+    else if (e.key === 'Enter') {
+      if (activeSuggestionIndex > -1) {
+        e.preventDefault();
+        handleSuggestionClick(suggestions[activeSuggestionIndex]);
+      }
+    }
+    // Escape
+    else if (e.key === 'Escape') {
+      setShowSuggestions(false);
+    }
   };
 
   return (
@@ -52,6 +83,7 @@ export default function AutocompleteInput({ name, value, placeholder, items, onS
         name={name}
         value={inputValue}
         onChange={handleChange}
+        onKeyDown={handleKeyDown} // Add keydown event handler
         placeholder={placeholder}
         required={required}
         onFocus={() => setShowSuggestions(inputValue.length > 0 && suggestions.length > 0)}
@@ -64,7 +96,10 @@ export default function AutocompleteInput({ name, value, placeholder, items, onS
             <li
               key={index}
               onClick={() => handleSuggestionClick(item)}
-              className="px-4 py-2 cursor-pointer hover:bg-indigo-50"
+              onMouseEnter={() => setActiveSuggestionIndex(index)} // Sync with mouse hover
+              className={`px-4 py-2 cursor-pointer ${
+                index === activeSuggestionIndex ? 'bg-indigo-100' : 'hover:bg-indigo-50'
+              }`}
             >
               {item}
             </li>

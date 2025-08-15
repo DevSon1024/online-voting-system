@@ -16,12 +16,13 @@ export default function Toast({ message, type = 'success', onDone }) {
     }
   }, [message, onDone]);
 
-  if (!visible) return null;
+  if (!message) return null;
 
-  const baseClasses = 'fixed top-5 right-5 flex items-center gap-3 px-6 py-4 rounded-xl shadow-lg text-white transition-transform duration-300 transform';
+  const baseClasses = 'fixed top-5 left-1/2 -translate-x-1/2 z-[100] flex items-center gap-4 px-6 py-4 rounded-xl shadow-large text-white transition-all duration-500 transform';
+  
   const typeClasses = {
-    success: 'bg-green-500',
-    error: 'bg-red-500',
+    success: 'bg-gradient-to-r from-green-500 to-emerald-500',
+    error: 'bg-gradient-to-r from-red-500 to-rose-500',
   };
 
   const icons = {
@@ -36,7 +37,7 @@ export default function Toast({ message, type = 'success', onDone }) {
   };
 
   return (
-    <div className={`${baseClasses} ${typeClasses[type]} ${visible ? 'translate-x-0' : 'translate-x-full'}`}>
+    <div className={`${baseClasses} ${typeClasses[type]} ${visible ? 'translate-y-0 opacity-100' : '-translate-y-20 opacity-0'}`}>
       {icons[type]}
       <span className="font-semibold">{message}</span>
     </div>
