@@ -1,5 +1,7 @@
+// frontend/src/components/AdminPanel.jsx
+
 import { useState } from 'react';
-import { deleteElection, deleteCandidate, getAdminElectionResults } from '../services/api';
+import { deleteElection, deleteCandidate, getAdminElectionResults, declareResults, revokeResults } from '../services/api';
 import Button from './common/Button';
 import VoteModal from './VoteModal'; // Using VoteModal as a generic modal
 import AdminElectionResults from './AdminElectionResults';
@@ -9,6 +11,24 @@ export default function AdminPanel({ election, onDataChange }) {
   const [showResultsModal, setShowResultsModal] = useState(false);
   const [results, setResults] = useState(null);
   const [loadingResults, setLoadingResults] = useState(false);
+  const [isDeclaring, setIsDeclaring] = useState(false);
+
+  const handleDeclare = async () => {
+    setIsDeclaring(true);
+    try {
+      if (election.resultsDeclared) {
+        await revokeResults(election._id);
+      } else {
+        await declareResults(election._id);
+      }
+      onDataChange();
+    } catch (error) {
+      console.error('Error updating result declaration:', error);
+      alert('Failed to update result status.');
+    } finally {
+      setIsDeclaring(false);
+    }
+  };
 
   const handleDeleteElection = async () => {
     if (window.confirm('Are you sure? This will delete the election and all related data.')) {
@@ -95,6 +115,17 @@ export default function AdminPanel({ election, onDataChange }) {
         
         {/* Action Buttons */}
         <div className="flex flex-wrap gap-2 sm:flex-col sm:w-auto">
+          {!isElectionUpcoming() && (
+            <Button
+              onClick={handleDeclare}
+              disabled={isDeclaring}
+              className={`flex-1 sm:flex-none font-semibold py-2 px-4 rounded-xl shadow-medium hover:shadow-large transform hover:scale-105 transition-all duration-200 text-sm ${
+                election.resultsDeclared ? 'bg-yellow-500 hover:bg-yellow-600 text-white' : 'bg-green-500 hover:bg-green-600 text-white'
+              }`}
+            >
+              {isDeclaring ? 'Updating...' : election.resultsDeclared ? 'Revoke Results' : 'Declare Results'}
+            </Button>
+          )}
           <Button 
             onClick={handleViewResults}
             disabled={loadingResults}

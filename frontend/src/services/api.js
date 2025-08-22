@@ -42,6 +42,8 @@ export const getUserVoteDetails = (electionId) => api.get(`/user/vote-details/${
 // --- Admin Service ---
 export const addElection = (electionData) => api.post('/admin/elections', electionData);
 export const deleteElection = (electionId) => api.delete(`/admin/elections/${electionId}`);
+export const declareResults = (electionId) => api.put(`/admin/elections/${electionId}/declare-results`);
+export const revokeResults = (electionId) => api.put(`/admin/elections/${electionId}/revoke-results`);
 export const addCandidate = (candidateData) => api.post('/admin/candidates', candidateData);
 export const deleteCandidate = (candidateId) => api.delete(`/admin/candidates/${candidateId}`);
 export const getAdminElectionResults = (electionId) => api.get(`/admin/election-results/${electionId}`);

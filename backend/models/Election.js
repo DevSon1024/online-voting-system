@@ -10,7 +10,8 @@ const electionSchema = new mongoose.Schema({
     city: { type: String },  // New field for location
     startDate: { type: Date, required: true },
     endDate: { type: Date, required: true },
-    candidates: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Candidate' }]
+    candidates: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Candidate' }],
+    resultsDeclared: { type: Boolean, default: false } // New field
 });
 
 const Election = mongoose.model('Election', electionSchema);

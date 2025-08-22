@@ -166,6 +166,36 @@ adminRouter.post('/elections', [authMiddleware, adminMiddleware], async (req, re
     }
 });
 
+adminRouter.put('/elections/:id/declare-results', [authMiddleware, adminMiddleware], async (req, res) => {
+    try {
+        const election = await Election.findById(req.params.id);
+        if (!election) {
+            return res.status(404).json({ msg: 'Election not found' });
+        }
+        election.resultsDeclared = true;
+        await election.save();
+        res.json(election);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+});
+
+adminRouter.put('/elections/:id/revoke-results', [authMiddleware, adminMiddleware], async (req, res) => {
+    try {
+        const election = await Election.findById(req.params.id);
+        if (!election) {
+            return res.status(404).json({ msg: 'Election not found' });
+        }
+        election.resultsDeclared = false;
+        await election.save();
+        res.json(election);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+});
+
 adminRouter.delete('/elections/:id', [authMiddleware, adminMiddleware], async (req, res) => {
     try {
         const election = await Election.findById(req.params.id);

@@ -1,3 +1,5 @@
+// frontend/src/components/ElectionCard.jsx
+
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { castVote, getUserVoteDetails } from '../services/api';
@@ -104,12 +106,18 @@ export default function ElectionCard({ election, hasVoted, onVoteSuccess }) {
           )}
         </div>
         
-        <Link 
-          to={`/results/${election._id}`} 
-          className="w-full text-center bg-white/80 backdrop-blur-sm text-gray-700 font-semibold py-3 px-4 rounded-xl border-2 border-gray-200 hover:border-indigo-300 hover:shadow-medium hover:scale-105 transition-all duration-200"
-        >
-          View Results
-        </Link>
+        {election.resultsDeclared ? (
+            <Link 
+              to={`/results/${election._id}`} 
+              className="w-full text-center bg-white/80 backdrop-blur-sm text-gray-700 font-semibold py-3 px-4 rounded-xl border-2 border-gray-200 hover:border-indigo-300 hover:shadow-medium hover:scale-105 transition-all duration-200"
+            >
+              View Results
+            </Link>
+          ) : (
+            <div className="text-center text-gray-600 font-semibold py-3 px-4">
+              Election result will be declared soon.
+            </div>
+          )}
       </div>
     );
   }
@@ -214,7 +222,7 @@ export default function ElectionCard({ election, hasVoted, onVoteSuccess }) {
           <p className="text-sm text-gray-600 mb-4">
             {isVotingEnded() ? 'Check out the final results below' : 'Come back when voting begins'}
           </p>
-          {isVotingEnded() && (
+          {isVotingEnded() && election.resultsDeclared ? (
             <Link 
               to={`/results/${election._id}`} 
               className="inline-flex items-center gap-2 text-indigo-600 hover:text-indigo-500 font-semibold transition-colors duration-200"
@@ -224,7 +232,11 @@ export default function ElectionCard({ election, hasVoted, onVoteSuccess }) {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
               </svg>
             </Link>
-          )}
+          ) : isVotingEnded() && !election.resultsDeclared ? (
+            <div className="text-center text-gray-600 font-semibold">
+              Election result will be declared soon.
+            </div>
+          ) : null}
         </div>
       )}
     </div>
