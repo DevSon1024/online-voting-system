@@ -10,7 +10,9 @@ const userSchema = new mongoose.Schema({
     state: { type: String, required: true },
     dob: { type: Date, required: true },
     photoUrl: { type: String },
-    validated: { type: Boolean, default: false }
+    validated: { type: Boolean, default: false },
+    validationStatus: { type: String, enum: ['pending', 'approved', 'rejected'], default: 'pending' },
+    rejectionReason: { type: String }
 });
 
 const User = mongoose.model('User', userSchema);

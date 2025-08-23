@@ -1,5 +1,6 @@
+// frontend/src/pages/UserManagementPage.jsx
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { getAllUsers, adminDeleteUser, getUnvalidatedUsers, validateUser, adminResetPassword } from '../services/api';
 import Spinner from '../components/common/Spinner';
 import Alert from '../components/common/Alert';
@@ -11,7 +12,8 @@ export default function UserManagementPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const [activeTab, setActiveTab] = useState('validated');
+  const location = useLocation();
+  const [activeTab, setActiveTab] = useState(location.state?.activeTab || 'validated');
 
   const fetchUsers = async () => {
     try {
@@ -116,9 +118,6 @@ export default function UserManagementPage() {
                           View Details
                         </Button>
                       </Link>
-                      {/* <Button onClick={() => handleDeleteUser(user._id, user.name)} variant="danger" className="w-auto px-3 py-1 text-xs">
-                        Delete
-                      </Button> */}
                     </td>
                   </tr>
                 ))}
@@ -132,22 +131,19 @@ export default function UserManagementPage() {
         <div className="bg-white rounded-xl shadow-md overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                </tr>
-              </thead>
+              {/* ... (thead) */}
               <tbody className="bg-white divide-y divide-gray-200">
                 {unvalidatedUsers.map(user => (
                   <tr key={user._id}>
                     <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">{user.name}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-gray-500">{user.email}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <Button onClick={() => handleApproveUser(user._id, user.name)} variant="success" className="w-auto px-3 py-1 text-xs">
-                        Approve
-                      </Button>
+                      {/* This link now points to the new validation detail page */}
+                      <Link to={`/admin/validate-user/${user._id}`}>
+                        <Button variant="secondary" className="w-auto px-3 py-1 text-xs">
+                          View Details
+                        </Button>
+                      </Link>
                     </td>
                   </tr>
                 ))}

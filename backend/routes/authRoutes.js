@@ -152,6 +152,10 @@ authRouter.post('/login', async (req, res) => {
         if (!isMatch) {
             return res.status(400).json({ msg: 'Invalid credentials' });
         }
+        
+        if (user.validationStatus === 'rejected') {
+            return res.status(401).json({ msg: `Your registration has been rejected. Reason: ${user.rejectionReason}` });
+        }
 
         if (!user.validated) {
             return res.status(401).json({ msg: 'Admin has not approved your request' });
@@ -160,7 +164,7 @@ authRouter.post('/login', async (req, res) => {
         const payload = { user: { id: user.id, role: user.role } };
         jwt.sign(payload, process.env.JWT_SECRET || 'your_jwt_secret', { expiresIn: 3600 }, (err, token) => {
             if (err) throw err;
-            res.json({ token });
+            res.json({ token, validationStatus: user.validationStatus, rejectionReason: user.rejectionReason });
         });
 
     } catch (err) {

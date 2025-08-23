@@ -1,6 +1,7 @@
+// frontend/src/pages/AdminDashboardPage.jsx
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { getElections, getUserProfile } from '../services/api';
+import { Link, useNavigate } from 'react-router-dom';
+import { getElections, getUserProfile, getUnvalidatedUsers } from '../services/api';
 import Spinner from '../components/common/Spinner';
 import Alert from '../components/common/Alert';
 import Button from '../components/common/Button';
@@ -8,25 +9,30 @@ import AdminPanel from '../components/AdminPanel';
 import VoteModal from '../components/VoteModal';
 import ManagePartiesModal from '../components/ManagePartiesModal';
 import ManageVotersModal from '../components/ManageVotersModal';
+import ValidationNotification from '../components/common/ValidationNotification';
 
 export default function AdminDashboardPage() {
   const [elections, setElections] = useState([]);
   const [adminProfile, setAdminProfile] = useState(null);
+  const [unvalidatedUsers, setUnvalidatedUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [showElectionModal, setShowElectionModal] = useState(false);
   const [showPartyModal, setShowPartyModal] = useState(false);
   const [showVoterModal, setShowVoterModal] = useState(false);
+  const navigate = useNavigate();
 
   const fetchDashboardData = async () => {
     setLoading(true);
     try {
-      const [electionsRes, profileRes] = await Promise.all([
+      const [electionsRes, profileRes, unvalidatedRes] = await Promise.all([
         getElections(),
-        getUserProfile()
+        getUserProfile(),
+        getUnvalidatedUsers(),
       ]);
       setElections(electionsRes.data);
       setAdminProfile(profileRes.data);
+      setUnvalidatedUsers(unvalidatedRes.data);
     } catch (err) {
       setError('Could not connect to the server. Please check your connection and try again.');
     } finally {
@@ -42,10 +48,18 @@ export default function AdminDashboardPage() {
     fetchDashboardData();
   };
 
+  const handleRedirectToValidation = () => {
+    navigate('/admin/users', { state: { activeTab: 'unvalidated' } });
+  };
+
   if (loading) return <Spinner />;
 
   return (
     <div className="max-w-7xl mx-auto">
+      <ValidationNotification
+        userCount={unvalidatedUsers.length}
+        onRedirect={handleRedirectToValidation}
+      />
       <div className="mb-8">
         <div className="glass-effect rounded-2xl p-8 shadow-medium">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">

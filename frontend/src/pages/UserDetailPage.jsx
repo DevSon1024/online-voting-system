@@ -1,3 +1,4 @@
+// frontend/src/pages/UserDetailPage.jsx
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getSingleUser, adminUpdateUser, adminResetPassword, adminDeleteUser } from '../services/api';

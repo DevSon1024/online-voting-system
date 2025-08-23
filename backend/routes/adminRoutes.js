@@ -381,4 +381,40 @@ adminRouter.get('/election-results/:electionId', [authMiddleware, adminMiddlewar
     }
 });
 
+// PUT /api/admin/validate-user/:id
+adminRouter.put('/validate-user/:id', [authMiddleware, adminMiddleware], async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id);
+        if (!user) {
+            return res.status(404).json({ msg: 'User not found' });
+        }
+        user.validated = true;
+        user.validationStatus = 'approved';
+        await user.save();
+        res.json({ msg: 'User validated successfully' });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+});
+
+// New Route to Reject a User
+adminRouter.put('/reject-user/:id', [authMiddleware, adminMiddleware], async (req, res) => {
+    const { reason } = req.body;
+    try {
+        const user = await User.findById(req.params.id);
+        if (!user) {
+            return res.status(404).json({ msg: 'User not found' });
+        }
+        user.validated = false;
+        user.validationStatus = 'rejected';
+        user.rejectionReason = reason;
+        await user.save();
+        res.json({ msg: 'User validation rejected' });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+});
+
 module.exports = adminRouter;

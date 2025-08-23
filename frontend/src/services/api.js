@@ -53,6 +53,7 @@ export const updateParty = (id, formData) => api.put(`/admin/parties/${id}`, for
 export const deleteParty = (id) => api.delete(`/admin/parties/${id}`);
 export const getUnvalidatedUsers = () => api.get('/admin/unvalidated-users');
 export const validateUser = (userId) => api.put(`/admin/validate-user/${userId}`);
+export const rejectUser = (userId, reason) => api.put(`/admin/reject-user/${userId}`, { reason });
 export const getAllUsers = () => api.get('/admin/users');
 export const getSingleUser = (userId) => api.get(`/admin/user/${userId}`);
 export const adminUpdateUser = (userId, userData) => api.put(`/admin/user/${userId}`, userData);

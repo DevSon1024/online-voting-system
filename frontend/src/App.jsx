@@ -15,6 +15,7 @@ import ResultsPage from './pages/ResultsPage';
 import ProfilePage from './pages/ProfilePage';
 import UserManagementPage from './pages/UserManagementPage';
 import UserDetailPage from './pages/UserDetailPage';
+import ValidationDetailPage from './pages/ValidationDetailPage'; 
 
 // Protected Route Wrappers
 const ProtectedRoute = () => {
@@ -58,6 +59,7 @@ export default function App() {
                 <Route path="/admin" element={<AdminDashboardPage />} />
                 <Route path="/admin/users" element={<UserManagementPage />} />
                 <Route path="/admin/user/:userId" element={<UserDetailPage />} />
+                <Route path="/admin/validate-user/:userId" element={<ValidationDetailPage />} />
               </Route>
               
               {/* Fallback Route */}
