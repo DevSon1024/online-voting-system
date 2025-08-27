@@ -75,7 +75,7 @@ export default function AdminPanel({ election, onDataChange }) {
   const status = getElectionStatus();
 
   return (
-    <div className="glass-effect rounded-2xl p-6 shadow-medium hover:shadow-large transition-all duration-300 border border-white/20">
+    <div className="elevated-card rounded-2xl p-6 hover:shadow-xl transition-all duration-300 hover-lift">
       {/* Header Section */}
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6">
         <div className="flex-grow">
@@ -114,42 +114,68 @@ export default function AdminPanel({ election, onDataChange }) {
         </div>
         
         {/* Action Buttons */}
-        <div className="flex flex-wrap gap-2 sm:flex-col sm:w-auto">
-          {!isElectionUpcoming() && (
-            <Button
-              onClick={handleDeclare}
-              disabled={isDeclaring}
-              className={`flex-1 sm:flex-none font-semibold py-2 px-4 rounded-xl shadow-medium hover:shadow-large transform hover:scale-105 transition-all duration-200 text-sm ${
-                election.resultsDeclared ? 'bg-yellow-500 hover:bg-yellow-600 text-white' : 'bg-green-500 hover:bg-green-600 text-white'
-              }`}
-            >
-              {isDeclaring ? 'Updating...' : election.resultsDeclared ? 'Revoke Results' : 'Declare Results'}
-            </Button>
-          )}
-          <Button 
-            onClick={handleViewResults}
-            disabled={loadingResults}
-            className="flex-1 sm:flex-none bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-2 px-4 rounded-xl shadow-medium hover:shadow-large transform hover:scale-105 transition-all duration-200 text-sm"
-          >
-            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-            </svg>
-            {loadingResults ? 'Loading...' : 'View Results'}
-          </Button>
-          <Button 
+        <div className="flex flex-wrap gap-3">
+          <Button
             onClick={() => setShowCandidateModal(true)}
-            className="flex-1 sm:flex-none bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold py-2 px-4 rounded-xl shadow-medium hover:shadow-large transform hover:scale-105 transition-all duration-200 text-sm"
+            variant="primary"
+            size="md"
+            className="flex-1 min-w-[140px]"
           >
-            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
             </svg>
             Add Candidate
           </Button>
-          <Button 
-            onClick={handleDeleteElection}
-            className="flex-1 sm:flex-none bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 text-white font-semibold py-2 px-4 rounded-xl shadow-medium hover:shadow-large transform hover:scale-105 transition-all duration-200 text-sm"
+          
+          <Button
+            onClick={handleViewResults}
+            variant="glass"
+            size="md"
+            disabled={loadingResults}
+            className="flex-1 min-w-[140px]"
           >
-            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            {loadingResults ? (
+              <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+            ) : (
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+            )}
+            {loadingResults ? 'Loading...' : 'View Results'}
+          </Button>
+          
+          {isElectionEnded() && (
+            <Button
+              onClick={handleDeclare}
+              variant={election.resultsDeclared ? "outline" : "success"}
+              size="md"
+              disabled={isDeclaring}
+              className="flex-1 min-w-[140px]"
+            >
+              {isDeclaring ? (
+                <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+              ) : (
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={election.resultsDeclared ? "M6 18L18 6M6 6l12 12" : "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"} />
+                </svg>
+              )}
+              {isDeclaring ? 'Processing...' : (election.resultsDeclared ? 'Revoke Results' : 'Declare Results')}
+            </Button>
+          )}
+          
+          <Button
+            onClick={handleDeleteElection}
+            variant="danger"
+            size="md"
+            className="flex-1 min-w-[140px]"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
             </svg>
             Delete
@@ -158,7 +184,7 @@ export default function AdminPanel({ election, onDataChange }) {
       </div>
       
       {/* Candidates Section */}
-      <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-gray-200">
+      <div className="glass-card rounded-xl p-5 border border-white/30 hover:border-white/50 transition-all duration-300">
         <div className="flex items-center justify-between mb-3">
           <h3 className="font-semibold text-gray-800 flex items-center gap-2">
             <svg className="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">

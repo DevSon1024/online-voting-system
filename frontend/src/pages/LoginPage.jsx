@@ -10,6 +10,7 @@ export default function LoginPage({ showToast }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [rejectionDetails, setRejectionDetails] = useState(null);
   const { login, isAuthenticated, isAdmin } = useAuth();
   const navigate = useNavigate();
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -23,16 +24,17 @@ export default function LoginPage({ showToast }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setRejectionDetails(null);
     try {
       await login({ email, password });
       showToast('Signed in successfully!');
     } catch (err) {
         if (err.response?.data?.validationStatus === 'rejected') {
             setError(err.response?.data?.msg);
-            // Redirect to registration page after a delay to show the message
-            setTimeout(() => {
-                navigate('/register');
-            }, 3000);
+            setRejectionDetails({
+                reason: err.response.data.msg,
+                email: err.response.data.userEmail,
+            });
         } else {
             setError(err.response?.data?.msg || 'Login failed. Check your connection or credentials.');
         }
@@ -99,6 +101,15 @@ export default function LoginPage({ showToast }) {
               Sign In
             </Button>
           </form>
+
+          {rejectionDetails && (
+            <div className="mt-4 text-center">
+                <p className="text-red-600">{rejectionDetails.reason}</p>
+                <Button onClick={() => navigate('/resubmit', { state: { email: rejectionDetails.email, reason: rejectionDetails.reason } })} className="mt-2">
+                    Resubmit Application
+                </Button>
+            </div>
+          )}
           
           <div className="mt-8 text-center">
             <div className="relative">

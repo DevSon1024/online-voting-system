@@ -13,9 +13,10 @@ import DashboardPage from './pages/DashboardPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 import ResultsPage from './pages/ResultsPage';
 import ProfilePage from './pages/ProfilePage';
-import UserManagementPage from './pages/UserManagementPage';
+import VoterManagementPage from './pages/VoterManagementPage';
 import UserDetailPage from './pages/UserDetailPage';
 import ValidationDetailPage from './pages/ValidationDetailPage'; 
+import ResubmissionPage from './pages/ResubmissionPage';
 
 // Protected Route Wrappers
 const ProtectedRoute = () => {
@@ -47,6 +48,7 @@ export default function App() {
               <Route path="/login" element={<LoginPage showToast={showToast} />} />
               <Route path="/register" element={<RegisterPage showToast={showToast} />} />
               <Route path="/results/:electionId" element={<ResultsPage />} />
+              <Route path="/resubmit" element={<ResubmissionPage />} />
 
               {/* Protected User and Admin Routes */}
               <Route element={<ProtectedRoute />}>
@@ -57,7 +59,7 @@ export default function App() {
               {/* Protected Admin Only Routes */}
               <Route element={<AdminRoute />}>
                 <Route path="/admin" element={<AdminDashboardPage />} />
-                <Route path="/admin/users" element={<UserManagementPage />} />
+                <Route path="/admin/voters" element={<VoterManagementPage />} />
                 <Route path="/admin/user/:userId" element={<UserDetailPage />} />
                 <Route path="/admin/validate-user/:userId" element={<ValidationDetailPage />} />
               </Route>

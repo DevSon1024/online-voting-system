@@ -150,7 +150,7 @@ authRouter.post('/login', async (req, res) => {
         }
         
         if (user.validationStatus === 'rejected') {
-            return res.status(401).json({ msg: `Your registration has been rejected. Reason: ${user.rejectionReason}`, validationStatus: user.validationStatus });
+            return res.status(401).json({ msg: `Your registration has been rejected. Reason: ${user.rejectionReason}`, validationStatus: user.validationStatus, userEmail: user.email });
         }
 
         if (!user.validated) {
@@ -168,4 +168,42 @@ authRouter.post('/login', async (req, res) => {
         res.status(500).send('Server error');
     }
 });
+
+// POST /api/auth/resubmit
+authRouter.post('/resubmit', upload.single('photo'), async (req, res) => {
+    const { name, email, password, city, state, dob } = req.body;
+
+    try {
+        let user = await User.findOne({ email });
+        if (!user) {
+            return res.status(404).json({ msg: 'User not found' });
+        }
+
+        // Update user fields
+        user.name = name;
+        if (password) {
+            const salt = await bcrypt.genSalt(10);
+            user.password = await bcrypt.hash(password, salt);
+        }
+        user.city = city;
+        user.state = state;
+        user.dob = new Date(dob);
+        if (req.file) {
+            user.photoUrl = `/uploads/photos/${req.file.filename}`;
+        }
+        
+        // Update validation status
+        user.validationStatus = 'resubmitted';
+        user.rejectionReason = undefined;
+
+        await user.save();
+
+        res.json({ msg: 'Your application has been resubmitted successfully. Please wait for admin validation.' });
+
+    } catch (err) {
+        console.error('Resubmission error:', err.message);
+        res.status(500).json({ msg: 'Server error during resubmission' });
+    }
+});
+
 module.exports = authRouter;

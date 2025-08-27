@@ -22,6 +22,8 @@ export const loginUser = (credentials) => api.post('/auth/login', credentials, {
   headers: { 'Content-Type': 'application/json' },
 });
 
+export const resubmitUser = (formData) => api.post('/auth/resubmit', formData);
+
 
 // --- User Profile Service ---
 export const getUserProfile = () => api.get('/user/profile');
@@ -52,6 +54,7 @@ export const getParties = () => api.get('/admin/parties');
 export const updateParty = (id, formData) => api.put(`/admin/parties/${id}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
 export const deleteParty = (id) => api.delete(`/admin/parties/${id}`);
 export const getUnvalidatedUsers = () => api.get('/admin/unvalidated-users');
+export const getResubmittedUsers = () => api.get('/admin/resubmitted-users');
 export const validateUser = (userId) => api.put(`/admin/validate-user/${userId}`);
 export const rejectUser = (userId, reason) => api.put(`/admin/reject-user/${userId}`, { reason });
 export const getAllUsers = () => api.get('/admin/users');
