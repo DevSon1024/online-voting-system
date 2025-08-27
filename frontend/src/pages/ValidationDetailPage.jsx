@@ -13,6 +13,7 @@ export default function ValidationDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [age, setAge] = useState(null);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -20,6 +21,16 @@ export default function ValidationDetailPage() {
         setLoading(true);
         const res = await getSingleUser(userId);
         setUser(res.data);
+        if (res.data.dob) {
+            const dob = new Date(res.data.dob);
+            const today = new Date();
+            let calculatedAge = today.getFullYear() - dob.getFullYear();
+            const m = today.getMonth() - dob.getMonth();
+            if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
+                calculatedAge--;
+            }
+            setAge(calculatedAge);
+        }
       } catch (err) {
         setError('Could not fetch user details.');
       } finally {
@@ -45,7 +56,7 @@ export default function ValidationDetailPage() {
     const reason = prompt(`Please provide a reason for rejecting ${user.name}:`);
     if (reason) {
       try {
-        await rejectUser(userId, reason);
+        await rejectUser(userId, { reason });
         setSuccess('User rejected successfully! Redirecting...');
         setTimeout(() => navigate('/admin/users', { state: { activeTab: 'unvalidated' } }), 2000);
       } catch (err) {
@@ -82,6 +93,7 @@ export default function ValidationDetailPage() {
                 <p><strong>State:</strong> {user.state}</p>
                 <p><strong>City:</strong> {user.city}</p>
                 <p><strong>Date of Birth:</strong> {new Date(user.dob).toLocaleDateString()}</p>
+                <p><strong>Age:</strong> {age}</p>
               </div>
             </div>
           </div>

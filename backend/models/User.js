@@ -11,8 +11,13 @@ const userSchema = new mongoose.Schema({
     dob: { type: Date, required: true },
     photoUrl: { type: String },
     validated: { type: Boolean, default: false },
-    validationStatus: { type: String, enum: ['pending', 'approved', 'rejected'], default: 'pending' },
+    validationStatus: { type: String, enum: ['pending', 'approved', 'rejected', 'resubmitted'], default: 'pending' },
     rejectionReason: { type: String }
+});
+
+// virtual field for age
+userSchema.virtual('age').get(function() {
+  return Math.floor((Date.now() - this.dob.getTime()) / (1000 * 3600 * 24 * 365.25));
 });
 
 const User = mongoose.model('User', userSchema);

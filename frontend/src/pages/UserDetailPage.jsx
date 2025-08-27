@@ -160,7 +160,7 @@ export default function UserDetailPage() {
             <h3 className="text-lg font-semibold mb-4">Actions</h3>
             <div className="flex space-x-4">
               <Button onClick={handleResetPassword} variant="secondary">Reset Password</Button>
-              <Button onClick={handleDeleteUser} variant="danger">Delete User</Button>
+              <Button onClick={handleDeleteUser} variant="danger">Delete Voter</Button>
             </div>
           </div>
         </div>

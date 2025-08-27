@@ -1,8 +1,4 @@
-/*
-* backend/routes/authRoutes.js
-* Handles user registration and login.
-*/
-
+// backend/routes/authRoutes.js
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -154,7 +150,7 @@ authRouter.post('/login', async (req, res) => {
         }
         
         if (user.validationStatus === 'rejected') {
-            return res.status(401).json({ msg: `Your registration has been rejected. Reason: ${user.rejectionReason}` });
+            return res.status(401).json({ msg: `Your registration has been rejected. Reason: ${user.rejectionReason}`, validationStatus: user.validationStatus });
         }
 
         if (!user.validated) {

@@ -1,6 +1,6 @@
 import json
 
-# Load the JSON file
+# Load the JSON
 with open('indian_states_cities.json', 'r') as file:
     data = json.load(file)
 

@@ -1,3 +1,4 @@
+// frontend/src/pages/LoginPage.jsx
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../hooks/AuthContext';
@@ -26,7 +27,15 @@ export default function LoginPage({ showToast }) {
       await login({ email, password });
       showToast('Signed in successfully!');
     } catch (err) {
-      setError(err.response?.data?.msg || 'Login failed. Check your connection or credentials.');
+        if (err.response?.data?.validationStatus === 'rejected') {
+            setError(err.response?.data?.msg);
+            // Redirect to registration page after a delay to show the message
+            setTimeout(() => {
+                navigate('/register');
+            }, 3000);
+        } else {
+            setError(err.response?.data?.msg || 'Login failed. Check your connection or credentials.');
+        }
     }
   };
 

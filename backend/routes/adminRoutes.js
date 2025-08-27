@@ -1,3 +1,4 @@
+// backend/routes/adminRoutes.js
 const express = require('express');
 const multer = require('multer');
 const path = require('path');
@@ -81,7 +82,18 @@ adminRouter.put('/user/:id', [authMiddleware, adminMiddleware, upload.single('ph
 // GET /api/admin/unvalidated-users
 adminRouter.get('/unvalidated-users', [authMiddleware, adminMiddleware], async (req, res) => {
     try {
-        const users = await User.find({ validated: false }).select('-password');
+        const users = await User.find({ validated: false, validationStatus: 'pending' }).select('-password');
+        res.json(users);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+});
+
+// GET /api/admin/resubmitted-users
+adminRouter.get('/resubmitted-users', [authMiddleware, adminMiddleware], async (req, res) => {
+    try {
+        const users = await User.find({ validationStatus: 'resubmitted' }).select('-password');
         res.json(users);
     } catch (err) {
         console.error(err.message);
@@ -97,6 +109,7 @@ adminRouter.put('/validate-user/:id', [authMiddleware, adminMiddleware], async (
             return res.status(404).json({ msg: 'User not found' });
         }
         user.validated = true;
+        user.validationStatus = 'approved';
         await user.save();
         res.json({ msg: 'User validated successfully' });
     } catch (err) {
@@ -375,23 +388,6 @@ adminRouter.get('/election-results/:electionId', [authMiddleware, adminMiddlewar
             voters,
             totalVotes: voters.length
         });
-    } catch (err) {
-        console.error(err.message);
-        res.status(500).send('Server Error');
-    }
-});
-
-// PUT /api/admin/validate-user/:id
-adminRouter.put('/validate-user/:id', [authMiddleware, adminMiddleware], async (req, res) => {
-    try {
-        const user = await User.findById(req.params.id);
-        if (!user) {
-            return res.status(404).json({ msg: 'User not found' });
-        }
-        user.validated = true;
-        user.validationStatus = 'approved';
-        await user.save();
-        res.json({ msg: 'User validated successfully' });
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server Error');
