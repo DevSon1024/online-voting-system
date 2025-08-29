@@ -1,6 +1,6 @@
 # Dependencies
 /node_modules
-
+/uploads
 # Environment Variables
 # This file contains sensitive information like database credentials and API keys.
 # It should NEVER be committed to your repository.

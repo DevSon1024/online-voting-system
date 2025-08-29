@@ -166,6 +166,14 @@ export default function VoterManagementPage() {
                           View Details
                         </Button>
                       </Link>
+                      <Button
+                        onClick={() => handleDeleteUser(user._id, user.name)}
+                        variant="danger"
+                        size="sm"
+                        className="w-auto"
+                      >
+                        Delete
+                      </Button>
                     </td>
                   </tr>
                 ))}
