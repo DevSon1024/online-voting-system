@@ -1,3 +1,5 @@
+// frontend/src/pages/DashboardPage.jsx
+
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom'; // Import Link
 import { getElections, getUserVotedElections, getUserProfile } from '../services/api';

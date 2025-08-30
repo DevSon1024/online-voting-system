@@ -62,7 +62,7 @@ export default function AdminPanel({ election, onDataChange }) {
     const now = new Date();
     return new Date(election.startDate) <= now && new Date(election.endDate) >= now;
   };
-  
+
   const isElectionEnded = () => new Date() > new Date(election.endDate);
   const isElectionUpcoming = () => new Date() < new Date(election.startDate);
 
