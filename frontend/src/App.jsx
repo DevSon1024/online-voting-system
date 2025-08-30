@@ -17,6 +17,7 @@ import VoterManagementPage from './pages/VoterManagementPage';
 import UserDetailPage from './pages/UserDetailPage';
 import ValidationDetailPage from './pages/ValidationDetailPage'; 
 import ResubmissionPage from './pages/ResubmissionPage';
+import VotingHistoryPage from './pages/VotingHistoryPage'; // Import the new page
 
 // Protected Route Wrappers
 const ProtectedRoute = () => {
@@ -54,6 +55,7 @@ export default function App() {
               <Route element={<ProtectedRoute />}>
                 <Route path="/dashboard" element={<DashboardPage />} />
                 <Route path="/profile" element={<ProfilePage />} />
+                <Route path="/history" element={<VotingHistoryPage />} /> {/* Add this new route */}
               </Route>
 
               {/* Protected Admin Only Routes */}

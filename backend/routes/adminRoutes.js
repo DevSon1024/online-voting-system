@@ -30,7 +30,8 @@ const upload = multer({ storage: storage });
 // GET /api/admin/users (Get all users)
 adminRouter.get('/users', [authMiddleware, adminMiddleware], async (req, res) => {
     try {
-        const users = await User.find({ validated: true }).select('-password');
+        // This query now filters for users where the role is 'voter'
+        const users = await User.find({ role: 'voter', validated: true }).select('-password');
         res.json(users);
     } catch (err) {
         console.error(err.message);

@@ -87,7 +87,8 @@ export default function DashboardPage() {
               </div>
               <div className="flex-grow text-center lg:text-left">
                 <h1 className="text-5xl font-bold text-gradient mb-3">Elections Dashboard</h1>
-                <p className="text-gray-600 text-lg mb-6">Participate in active elections and view your voting history</p>
+                <p className="text-gray-600 text-lg mb-6">Welcome, {userProfile?.name || 'Voter'}</p>
+                <p className="text-gray-500 text-sm mb-6">{userProfile?.email}</p>
                 {userProfile && (
                   <div className="glass-card rounded-xl p-6">
                     <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
@@ -136,12 +137,14 @@ export default function DashboardPage() {
                    Edit Profile
                  </Button>
                </Link>
-               <Button variant="glass" size="lg" fullWidth className="justify-center">
-                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                 </svg>
-                 Voting History
-               </Button>
+               <Link to="/history">
+                 <Button variant="glass" size="lg" fullWidth className="justify-center">
+                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                   </svg>
+                   Voting History
+                 </Button>
+               </Link>
             </div>
           </div>
         </div>

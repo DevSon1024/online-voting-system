@@ -1,7 +1,7 @@
 // frontend/src/pages/AdminDashboardPage.jsx
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { getElections, getUserProfile, getUnvalidatedUsers } from '../services/api';
+import { getElections, getUserProfile, getUnvalidatedUsers, getResubmittedUsers } from '../services/api'; // getResubmittedUsers is important
 import Spinner from '../components/common/Spinner';
 import Alert from '../components/common/Alert';
 import Button from '../components/common/Button';
@@ -14,6 +14,7 @@ export default function AdminDashboardPage() {
   const [elections, setElections] = useState([]);
   const [adminProfile, setAdminProfile] = useState(null);
   const [unvalidatedUsers, setUnvalidatedUsers] = useState([]);
+  const [resubmittedUsers, setResubmittedUsers] = useState([]); // State for resubmitted users
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [showElectionModal, setShowElectionModal] = useState(false);
@@ -35,14 +36,16 @@ export default function AdminDashboardPage() {
   const fetchDashboardData = async () => {
     setLoading(true);
     try {
-      const [electionsRes, profileRes, unvalidatedRes] = await Promise.all([
+      const [electionsRes, profileRes, unvalidatedRes, resubmittedRes] = await Promise.all([
         getElections(),
         getUserProfile(),
         getUnvalidatedUsers(),
+        getResubmittedUsers(), // Fetch resubmitted users
       ]);
       setElections(electionsRes.data);
       setAdminProfile(profileRes.data);
       setUnvalidatedUsers(unvalidatedRes.data);
+      setResubmittedUsers(resubmittedRes.data); // Set the state
     } catch (err) {
       setError('Could not connect to the server. Please check your connection and try again.');
     } finally {
@@ -61,14 +64,29 @@ export default function AdminDashboardPage() {
   const handleRedirectToValidation = () => {
     navigate('/admin/voters', { state: { activeTab: 'unvalidated' } });
   };
+  
+  const handleRedirectToResubmitted = () => {
+    navigate('/admin/voters', { state: { activeTab: 'resubmitted' } });
+  };
+
 
   if (loading) return <Spinner />;
 
   return (
     <div className="max-w-7xl mx-auto">
       <ValidationNotification
-        userCount={unvalidatedUsers.length}
-        onRedirect={handleRedirectToValidation}
+        count={unvalidatedUsers.length}
+        message={`${unvalidatedUsers.length} new voter(s) are waiting for validation.`}
+        buttonText="View Validation Requests"
+        onClick={handleRedirectToValidation}
+        variant="info"
+      />
+      <ValidationNotification
+        count={resubmittedUsers.length}
+        message={`${resubmittedUsers.length} voter(s) have resubmitted their application.`}
+        buttonText="View Resubmitted Requests"
+        onClick={handleRedirectToResubmitted}
+        variant="warning"
       />
       <div className="mb-8">
         <div className="elevated-card rounded-2xl p-8 shadow-large hover-lift">
@@ -91,7 +109,7 @@ export default function AdminDashboardPage() {
               </div>
               <div className="flex-grow text-center lg:text-left">
                 <h1 className="text-5xl font-bold text-gradient mb-3">Admin Dashboard</h1>
-                <p className="text-gray-600 text-lg mb-6">Manage elections, candidates, parties, and users.</p>
+                <p className="text-gray-600 text-lg mb-6">Welcome, {adminProfile?.name || 'Admin'}</p>
                 {adminProfile && (
                   <div className="glass-card rounded-xl p-6">
                     <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
